@@ -6,11 +6,33 @@ This project is part of the Software Engineering course of BS in Data Science at
 ## Team Members
 
 1. [Shivang Kumar](www.github.com/kumar-shivang)
-2. [to be added](www.github.com/username)
+2. [Durgesh Puri Goswami](www.github.com/Durgesh-prog)
 
 ## Technologies Used
 
 1. Flask - Backend
-2. Vue/React - Frontend
+2. React - Frontend
 3. Huggingface - LLM
 4. Docker - Containerization
+
+
+## Installation Steps
+
+Run Simulatenously
+sh start.sh
+
+
+Run Separately
+
+Terminal 1 (For Backend)
+python3 -m venv venv   
+source venv/bin/activate 
+pip install Flask       
+pip install flask_sqlalchemy
+cd backend/
+python app.py
+
+Terminal 2 (For Frontend)
+cd frontend/
+yarn (For installing dependencies once)
+yarn start
