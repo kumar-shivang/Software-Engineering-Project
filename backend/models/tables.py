@@ -28,8 +28,8 @@ class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
     email = db.Column(db.String(50))
-    password_hash = db.Column(db.String(128))
-    courses = db.relationship('Course', secondary='enrollments', backref=db.backref('students', lazy='dynamic'))
+    password_hash = db.Column(db.String(255))
+    # courses = db.relationship('Course', secondary='enrollments', backref=db.backref('students', lazy='dynamic'))
 
 
     @property
