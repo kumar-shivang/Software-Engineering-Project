@@ -1,8 +1,7 @@
 import email
 from . import api
 from flask import request, jsonify
-from database.tables import Student, Assignment, Submission
-
+from database.tables import Student, Assignment
 @api.route("/student",methods=["GET"])
 def get_students():
     students = Student.objects().to_json()
