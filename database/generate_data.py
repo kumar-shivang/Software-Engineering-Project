@@ -193,7 +193,7 @@ def generate_questions():
             "question": "What is square root of 4?",
             "answers": ["-2","2","5","15"],
             "correct_answer": ["2","-2"],
-            "qtype": "multiple_answer"
+            "qtype": "multiple_answers"
         },
         {
             "question": "What is sqrt(2)?",
@@ -201,12 +201,6 @@ def generate_questions():
             "correct_answer": ["1.41","1.42"],
             "qtype": "range"
         },
-        {
-            "question": "2 is a ____?",
-            "answers": [],
-            "correct_answer": ["prime number","even number"],
-            "qtype": "fill_in_the_blank"
-        }
 
     ]
 
