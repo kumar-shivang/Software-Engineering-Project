@@ -1,15 +1,16 @@
-from langchain_ollama import ChatOllama
-from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 from langchain_core.chat_history import (
     BaseChatMessageHistory,
     InMemoryChatMessageHistory,
 )
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_core.prompts import (
     ChatPromptTemplate,
     MessagesPlaceholder,
     PromptTemplate,
 )
 from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_ollama import ChatOllama
+
 from .store import get_session_history
 
 chat_model = ChatOllama(
@@ -73,4 +74,3 @@ chain = prompt | chat_model
 
 
 with_message_history = RunnableWithMessageHistory(chain, get_session_history)
-

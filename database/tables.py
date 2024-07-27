@@ -1,5 +1,15 @@
 from datetime import datetime
-from mongoengine import Document, DateTimeField, StringField, IntField, ListField, DictField, BooleanField, ReferenceField
+
+from mongoengine import (
+    BooleanField,
+    DateTimeField,
+    DictField,
+    Document,
+    IntField,
+    ListField,
+    ReferenceField,
+    StringField,
+)
 
 """
     +---------------+               +---------------+
@@ -76,15 +86,15 @@ class Student(Document):
             Submits answers for an assignment with the given assignment_id.
 
     """
+
     name = StringField(required=True)
     email = StringField(required=True, unique=True)
     password = StringField(required=True)
     courses = ListField(ReferenceField("Course"))
     grades = DictField()  # {assignment_id: grade}
-    submissions = ListField(ReferenceField("Submission")) #
+    submissions = ListField(ReferenceField("Submission"))  #
 
-
-    def enroll(self, course_id:str) -> None:
+    def enroll(self, course_id: str) -> None:
         """
         Enrolls the student in a course with the given course_id.
 
@@ -104,7 +114,7 @@ class Student(Document):
         self.save()
         course.save()
 
-    def submit(self, assignment_id:str, answers: dict) -> None:
+    def submit(self, assignment_id: str, answers: dict) -> None:
         """
         Submits answers for an assignment with the given assignment_id.
 
@@ -138,8 +148,8 @@ class Student(Document):
         elif self.grades[assignment_id] < submission.get_total_grade():
             self.grades[assignment_id] = submission.get_total_grade()
         self.save()
-    
-    def get_score(self,assignment_id:str):
+
+    def get_score(self, assignment_id: str):
         """
         Get the score for the assignment with the given assignment_id.
 
@@ -150,11 +160,6 @@ class Student(Document):
             float: The score for the assignment.
         """
         return self.grades[str(assignment_id)]
-    
-    
-
-
-    
 
 
 class Course(Document):
@@ -205,19 +210,20 @@ class Week(Document):
     """
 
     number = IntField(required=True)
-    course = ReferenceField(Course,required=True)
+    course = ReferenceField(Course, required=True)
     assignments = ListField(ReferenceField("Assignment"))
     lectures = ListField(ReferenceField("Lecture"))
 
-
-    def add_assignment(self, name: str, due_date: datetime,graded:bool) -> "Assignment":
+    def add_assignment(
+        self, name: str, due_date: datetime, graded: bool
+    ) -> "Assignment":
         """
         Adds a new assignment to the week.
 
         Args:
             assignment_name (str): The name of the assignment.
             due_date (datetime): The due date of the assignment.
-        
+
         Returns:
             Assignment: The newly created Assignment object.
         """
@@ -244,7 +250,7 @@ class Week(Document):
 
         Returns:
             Lecture: The newly created Lecture object.
-            """
+        """
         lecture = Lecture(
             name=lecture_name,
             week=self,
@@ -256,7 +262,6 @@ class Week(Document):
         self.lectures.append(lecture)
         self.save()
         return lecture
-
 
 
 class Assignment(Document):
@@ -287,10 +292,10 @@ class Assignment(Document):
     questions = ListField(ReferenceField("Question"))
     week = ReferenceField(Week)
     course = ReferenceField(Course)
-    
+
     def add_question(
         self, question: str, qtype: str, answers: list, correct_answer: str
-    )-> "Question":
+    ) -> "Question":
         """
         Adds a new question to the assignment.
 
@@ -308,7 +313,7 @@ class Assignment(Document):
             qtype=qtype,
             answers=answers,
             correct_answer=correct_answer,
-            assignment=self
+            assignment=self,
         )
         question.save()
         self.questions.append(question)
@@ -359,22 +364,23 @@ class Submission(Document):
                 self.result[question_id] = 0
         self.save()
         return self.result
-    
+
     def get_total_grade(self):
         return sum(self.result.values())
-    
+
     def get_result(self):
         for question_id, answer in self.answers.items():
             question = Question.objects(id=question_id).first()
             if question is None:
                 raise ValueError("Question not found")
             result = []
-            result.append({"question": question.question, "answer": answer, "correct": self.result["correct"]})
-    
-    
-
-    
-
+            result.append(
+                {
+                    "question": question.question,
+                    "answer": answer,
+                    "correct": self.result["correct"],
+                }
+            )
 
 
 class Question(Document):
@@ -391,13 +397,13 @@ class Question(Document):
         graded (bool): A flag indicating if the question is for practice or graded.
         grades (List[Dict[str, Any]]): The list of grades for the question.
     """
+
     question = StringField(required=True)
     qtype = StringField(required=True)
     answers = ListField(StringField())
     correct_answer = ListField(StringField())
     assignment = ReferenceField(Assignment)
     graded = BooleanField(default=False)
-
 
     def check_answer(self, answer: list) -> bool:
         """
@@ -417,13 +423,12 @@ class Question(Document):
             return minimum <= answer <= maximum
         elif self.qtype == "multiple_answers":
             return set(answer) == set(self.correct_answer)
-            
+
         else:
             return False
 
 
 class Lecture(Document):
-
     name = StringField(required=True)
     week = ReferenceField(Week)
     index = IntField(required=True)

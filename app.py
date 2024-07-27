@@ -1,8 +1,10 @@
 from flask import Flask
-from llm import llm
-from database import init_db
-from database.generate_data import *
+
+from api import api
 from api.student import *
+from database import init_db
+from database.generate_data import generate_all
+from llm import llm
 
 
 app = Flask(__name__)
@@ -10,15 +12,7 @@ app.register_blueprint(llm)
 app.register_blueprint(api)
 init_db()
 
-
-generate_students()
-generate_courses()
-generate_enrollments()
-generate_weeks()
-generate_lectures()
-generate_assignments()
-generate_questions()
-
+generate_all()
 
 
 def hello_world():
