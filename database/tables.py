@@ -80,7 +80,7 @@ class Student(Document):
     email = StringField(required=True, unique=True)
     password = StringField(required=True)
     courses = ListField(ReferenceField("Course"))
-    grades = ListField(DictField())  # {assignment_id: grade}
+    grades = DictField()  # {assignment_id: grade}
     submissions = ListField(ReferenceField("Submission")) #
 
 
@@ -101,7 +101,6 @@ class Student(Document):
         else:
             course.students.append(self)
             self.courses.append(course)
-            print(f"{self.name} successfully enrolled in {course.name}")
         self.save()
         course.save()
 
@@ -121,7 +120,7 @@ class Student(Document):
         if assignment is None:  # if no assignment found
             raise ValueError("Assignment not found")
         elif (
-            self not in assignment.course.students
+            self not in assignment.week.course.students
         ):  # if student is not enrolled in the course
             raise ValueError("Student not enrolled in the course")
 
@@ -133,10 +132,11 @@ class Student(Document):
         submission.save()
         submission.grade_submission()
         self.submissions.append(submission)
-        if assignment_id not in self.grades:
-            self.grades.append({assignment_id: submission.grade})
-        elif self.grades[assignment_id] < submission.grade:
-            self.grades[assignment_id] = submission.grade
+        assignment_id = str(assignment_id)
+        if assignment_id not in self.grades.keys():
+            self.grades[assignment_id] = submission.get_total_grade()
+        elif self.grades[assignment_id] < submission.get_total_grade():
+            self.grades[assignment_id] = submission.get_total_grade()
         self.save()
 
 
@@ -324,8 +324,8 @@ class Submission(Document):
 
     student = ReferenceField(Student)
     assignment = ReferenceField(Assignment)
-    answers = ListField(DictField())
-    grade = DictField()
+    answers = DictField()
+    result = DictField()
 
     def grade_submission(self):
         """
@@ -335,42 +335,32 @@ class Submission(Document):
             Dict[str, float]: The grade for the submission.
 
         """
-        assignment = self.assignment
-        questions = assignment.questions
-        grade = 0
-        for i in range(len(questions)):
-            question = questions[i]
-            answer = self.answers[i]
+        for question_id, answer in self.answers.items():
+            question = Question.objects(id=question_id).first()
+            if question is None:
+                raise ValueError("Question not found")
             if question.check_answer(answer):
-                grade += 1
-        self.grade = {"grade": grade, "total": len(questions)}
+                self.result[question_id] = 1
+            else:
+                self.result[question_id] = 0
         self.save()
-        return self.grade
+        return self.result
+    
+    def get_total_grade(self):
+        return sum(self.result.values())
+    
+    def get_result(self):
+        for question_id, answer in self.answers.items():
+            question = Question.objects(id=question_id).first()
+            if question is None:
+                raise ValueError("Question not found")
+            result = []
+            result.append({"question": question.question, "answer": answer, "correct": self.result["correct"]})
+    
+    
 
-    def get_result(self): # 
-        """
-        Get the result of the submission.
+    
 
-        Returns:
-            List[Dict[str, Any]]: A list of dictionaries containing the question, answer, and correctness.
-        """
-        assignment = self.assignment
-        questions = assignment.questions
-        result = []
-        for i in range(len(questions)):
-            question_id = questions[i].id
-            question = questions[i]
-            answer = self.answers[i]
-            correct = question.check_answer(answer)
-            result.append(
-                {
-                    "question_id": question_id,
-                    "question": question.question,
-                    "answer": answer,
-                    "correct": correct,
-                }
-            )
-        return result
 
 
 class Question(Document):
@@ -393,9 +383,9 @@ class Question(Document):
     correct_answer = ListField(StringField())
     assignment = ReferenceField(Assignment)
     graded = BooleanField(default=False)
-    grades = ListField(DictField())
 
-    def check_answer(self, answer: str) -> bool:
+
+    def check_answer(self, answer: list) -> bool:
         """
         Checks if the given answer is correct.
 
@@ -404,17 +394,16 @@ class Question(Document):
 
         """
         if self.qtype == "multiple_choice":
-            return answer == self.correct_answer[0]
+            return answer == self.correct_answer
         elif self.qtype == "range":
             # when the answer is a range of numbers first and second element of the answer list represent the minimum and maximum values respectively
-            maximum = float(self.answers[1])
-            minimum = float(self.answers[0])
-            answer = float(answer)
+            maximum = float(self.correct_answer[1])
+            minimum = float(self.correct_answer[0])
+            answer = float(answer[0])
             return minimum <= answer <= maximum
-        elif self.qtype == "fill_in_the_blank":
-            return answer in self.answers
         elif self.qtype == "multiple_answers":
             return set(answer) == set(self.correct_answer)
+            
         else:
             return False
 
