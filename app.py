@@ -1,21 +1,30 @@
-from flask import Flask 
-from models import db
-from models.tables import *
+from flask import Flask
+from llm import llm
+from database import init_db
+from database.generate_data import *
+from api.student import *
+
+
 app = Flask(__name__)
+app.register_blueprint(llm)
+app.register_blueprint(api)
+init_db()
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.sqlite'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db.init_app(app)
+generate_students()
+generate_courses()
+generate_enrollments()
+generate_weeks()
+generate_lectures()
+generate_assignments()
+generate_questions()
 
-with app.app_context():
-    db.create_all()
-    print("Database created!")
-@app.route('/')
+
+
 def hello_world():
-    return 'Hello, World!'
+    return "Hello, World!"
 
-if __name__ == '__main__':
+
+print(app.url_map)
+if __name__ == "__main__":
     app.run(debug=True)
-    print("Database created!")
-
