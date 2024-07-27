@@ -138,6 +138,20 @@ class Student(Document):
         elif self.grades[assignment_id] < submission.get_total_grade():
             self.grades[assignment_id] = submission.get_total_grade()
         self.save()
+    
+    def get_score(self,assignment_id:str):
+        """
+        Get the score for the assignment with the given assignment_id.
+
+        Args:
+            assignment_id (str): The ID of the assignment to get the score for.
+
+        Returns:
+            float: The score for the assignment.
+        """
+        return self.grades[str(assignment_id)]
+    
+    
 
 
     
