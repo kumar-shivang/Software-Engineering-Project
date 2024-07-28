@@ -20,10 +20,23 @@ def generate_students():
 
 
 def generate_courses():
-    courses = ["Math", "Science", "History"]
+    courses = [
+        {
+            "name": "Math",
+            "description": "Math is the study of numbers, shapes, and patterns.",
+        },
+        {
+            "name": "Science",
+            "description": "Science is the study of the natural world.",
+        },
+        {
+            "name": "History",
+            "description": "History is the study of the past.",
+        },
+    ]
     for course in courses:
-        if not Course.objects(name=course):
-            course = Course(name=course)
+        if not Course.objects(name=course["name"]):
+            course = Course(name=course["name"], description=course["description"])
             course.save()
 
 
