@@ -1,15 +1,17 @@
 from flask import Flask
 
-from api import api
-from api.student import *
+from api import init_api
+# from api.student import student_blueprint
+# from api.course import course_blueprint
 from database import init_db
 from database.generate_data import generate_all
-from llm import llm
+
+
 
 
 app = Flask(__name__)
-app.register_blueprint(llm)
-app.register_blueprint(api)
+init_api(app)
+
 init_db()
 
 generate_all()
