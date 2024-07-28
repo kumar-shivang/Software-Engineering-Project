@@ -1,8 +1,7 @@
-from flask import Flask
+from flask import Flask, jsonify
 
 from api import init_api
-# from api.student import student_blueprint
-# from api.course import course_blueprint
+
 from database import init_db
 from database.generate_data import generate_all
 
@@ -17,8 +16,13 @@ init_db()
 generate_all()
 
 
-def hello_world():
-    return "Hello, World!"
+@app.route("/get_all_routes")
+def get_all_routes():
+    # return in json format
+    url_map = app.url_map
+    return jsonify({rule.endpoint: rule.rule for rule in url_map.iter_rules()})
+    
+    
 
 
 print(app.url_map)
