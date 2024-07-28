@@ -7,7 +7,6 @@ from . import api
 student_blueprint = Blueprint("student", __name__, url_prefix="/student")
 
 
-
 @student_blueprint.route("/", methods=["GET"])
 def get_students():
     students = Student.objects().to_json()
@@ -49,6 +48,3 @@ def get_score(student_id):
 
 
 api.register_blueprint(student_blueprint)
-
-
-

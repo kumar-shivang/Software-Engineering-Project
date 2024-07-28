@@ -1,10 +1,10 @@
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from langchain_core.chat_history import (
     BaseChatMessageHistory,
     InMemoryChatMessageHistory,
 )
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+
 from pymongo import MongoClient
 
 
@@ -49,4 +49,3 @@ def save_session_history(session_id: str, history: BaseChatMessageHistory) -> No
     collection.update_one(
         {"session_id": session_id}, {"$set": {"history": chat_history_to_dict(history)}}
     )
-

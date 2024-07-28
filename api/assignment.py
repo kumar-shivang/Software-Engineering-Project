@@ -1,10 +1,11 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify
 
-from database.tables import Week, Course, Assignment
+from database.tables import Week, Assignment
 
 from . import api
 
 assignment_blueprint = Blueprint("assignment", __name__, url_prefix="/assignment")
+
 
 @assignment_blueprint.route("/<week_id>", methods=["GET"])
 def get_assignments(week_id):
@@ -12,9 +13,11 @@ def get_assignments(week_id):
     assignments = week.assignments
     return jsonify({"assignments": [assignment.to_json() for assignment in assignments]})
 
+
 @assignment_blueprint.route("/<assignment_id>", methods=["GET"])
 def get_assignment(assignment_id):
     assignment = Assignment.objects(id=assignment_id).first()
     return assignment.to_json()
+
 
 api.register_blueprint(assignment_blueprint)

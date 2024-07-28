@@ -1,14 +1,14 @@
 import uuid
 
 from flask import Blueprint, jsonify, request
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+from langchain_core.messages import AIMessage, HumanMessage
 
 from .chat import code_model, code_prompt, qa_model, qa_prompt, with_message_history
 from .store import get_session_history, save_session_history
 from api import api
 
 
-llm_blueprint = Blueprint("/llm", __name__,url_prefix="/help")
+llm_blueprint = Blueprint("/llm", __name__, url_prefix="/help")
 
 
 @llm_blueprint.route("/chat", methods=["POST"])
