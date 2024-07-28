@@ -5,12 +5,13 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 from .chat import code_model, code_prompt, qa_model, qa_prompt, with_message_history
 from .store import get_session_history, save_session_history
+from api import api
 
 
-llm = Blueprint("/llm", __name__)
+llm_blueprint = Blueprint("/llm", __name__,url_prefix="/help")
 
 
-@llm.route("/chat", methods=["POST"])
+@llm_blueprint.route("/chat", methods=["POST"])
 def chat():
     data = request.json
     message = data["message"]
@@ -37,7 +38,7 @@ def chat():
     return jsonify(json)
 
 
-@llm.route("/explain", methods=["POST"])
+@llm_blueprint.route("/explain", methods=["POST"])
 def explain():
     data = request.json
     # message = data['message']
@@ -48,7 +49,7 @@ def explain():
     return jsonify({"response": response})
 
 
-@llm.route("/feedback", methods=["POST"])
+@llm_blueprint.route("/feedback", methods=["POST"])
 def feedback():
     data = request.json
     assignment = data["assignment"]
@@ -64,3 +65,6 @@ def feedback():
             new_prompt = qa_prompt.format(question=question, answer=answer)
             response[id] = qa_model.invoke(new_prompt).content
     return jsonify(response)
+
+
+api.register_blueprint(llm_blueprint)
