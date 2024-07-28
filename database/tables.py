@@ -92,7 +92,7 @@ class Student(Document):
     password = StringField(required=True)
     courses = ListField(ReferenceField("Course"))
     grades = DictField()  # {assignment_id: grade}
-    submissions = ListField(ReferenceField("Submission"))  #
+    submissions = ListField(ReferenceField("Submission"))
 
     def enroll(self, course_id: str) -> None:
         """
@@ -168,8 +168,9 @@ class Course(Document):
     """
 
     name = StringField(required=True)
-    weeks = ListField(ReferenceField("Week"))
-    students = ListField(ReferenceField(Student))
+    description = StringField(required=True)
+    weeks = ListField(ReferenceField("Week"))  # [week1,week2....]
+    students = ListField(ReferenceField(Student))  # [student1,student2]
 
     def add_week(self, week_no: int):
         """
@@ -289,8 +290,8 @@ class Assignment(Document):
     name = StringField(required=True)
     due_date = DateTimeField(required=False)
     graded = BooleanField(default=False)
-    questions = ListField(ReferenceField("Question"))
-    week = ReferenceField(Week)
+    questions = ListField(ReferenceField("Question"))  # [question1,question2....]
+    week = ReferenceField(Week)  # week...
     course = ReferenceField(Course)
 
     def add_question(
@@ -343,8 +344,8 @@ class Submission(Document):
 
     student = ReferenceField(Student)
     assignment = ReferenceField(Assignment)
-    answers = DictField()
-    result = DictField()
+    answers = DictField()  # {question_id:[answer]}
+    result = DictField()  # {question_id:0,1}
 
     def grade_submission(self):
         """
@@ -400,8 +401,8 @@ class Question(Document):
 
     question = StringField(required=True)
     qtype = StringField(required=True)
-    answers = ListField(StringField())
-    correct_answer = ListField(StringField())
+    answers = ListField(StringField())  # ['animal','machine'....]
+    correct_answer = ListField(StringField())  # ["animal"]
     assignment = ReferenceField(Assignment)
     graded = BooleanField(default=False)
 
