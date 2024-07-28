@@ -1,8 +1,6 @@
 from datetime import datetime, timedelta
 
-from mongoengine import connect
-
-from .tables import Assignment, Course, Lecture, Question, Student, Week
+from .tables import Course, Lecture, Question, Student, Week
 
 
 def generate_students():
@@ -19,9 +17,6 @@ def generate_students():
                 password=student["password"],
             )
             student.save()
-            print(student.name)
-        else:
-            print("{} already exists".format(student["name"]))
 
 
 def generate_courses():
@@ -30,9 +25,6 @@ def generate_courses():
         if not Course.objects(name=course):
             course = Course(name=course)
             course.save()
-            print(course.name)
-        else:
-            print("{} already exists".format(course))
 
 
 def generate_enrollments():
@@ -42,9 +34,6 @@ def generate_enrollments():
         for course in courses:
             if student not in course.students and course not in student.courses:
                 student.enroll(course.id)
-                print(student.name, "enrolled in", course.name)
-            else:
-                print(student.name, "is already enrolled in", course.name)
 
 
 def generate_weeks():
@@ -52,9 +41,6 @@ def generate_weeks():
         for i in range(1, 11):
             if i not in [week.number for week in course.weeks]:
                 course.add_week(i)
-                print("Week", i, "added to", course.name)
-        course.save()
-        print(course.weeks)
 
 
 def generate_lectures():
@@ -149,7 +135,6 @@ Never gonna say goodbye
                     url=lecture["video_link"],
                     transcript=lecture["transcript"],
                 )
-            print(lecture["name"], "added to", course.name)
         week.save()
 
 
@@ -178,7 +163,6 @@ def generate_assignments():
                     graded=assignment["graded"],
                     due_date=assignment["due_date"],
                 )
-            print(assignment["name"], "added to", course.name)
         week.save()
 
 
@@ -217,7 +201,7 @@ def generate_questions():
                         correct_answer=question["correct_answer"],
                         qtype=question["qtype"],
                     )
-            print(question["question"], "added to", course.name)
+
         week.save()
 
 

@@ -6,8 +6,6 @@ from database import init_db
 from database.generate_data import generate_all
 
 
-
-
 app = Flask(__name__)
 init_api(app)
 
@@ -21,10 +19,7 @@ def get_all_routes():
     # return in json format
     url_map = app.url_map
     return jsonify({rule.endpoint: rule.rule for rule in url_map.iter_rules()})
-    
-    
 
 
-print(app.url_map)
 if __name__ == "__main__":
     app.run(debug=True)
