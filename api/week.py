@@ -7,12 +7,6 @@ from . import api
 week_blueprint = Blueprint("week", __name__, url_prefix="/week")
 
 
-# @week_blueprint.route("/<course_id>", methods=["GET"])
-# def get_weeks(course_id):
-#     course = Course.objects(id=course_id).first()
-#     weeks = course.weeks
-#     return jsonify({"weeks": [week.to_json() for week in weeks]})
-
 
 # NOTE: get single week
 @week_blueprint.route("/<week_id>", methods=["GET"])
