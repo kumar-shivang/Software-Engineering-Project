@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request
 
 from database.tables import Assignment, Student
-
 from . import api
 
 student_blueprint = Blueprint("student", __name__, url_prefix="/student")
@@ -39,14 +38,14 @@ def get_student(student_id):
 def get_courses(student_id):
     student = Student.objects(id=student_id).first()
     if student is None:
-        return (jsonify({"error": "Student not found"}),)
+        return jsonify({"error": "Student not found"}), 404
     courses = student.courses
     return jsonify({"courses": [course.to_json() for course in courses]})
 
 
 # NOTE: get assignments by student id
 @student_blueprint.route("/score", methods=["GET"])
-def get_score(student_id):
+def get_score():
     data = request.json
     student_id = data["student_id"]
     assignment_id = data["assignment_id"]
