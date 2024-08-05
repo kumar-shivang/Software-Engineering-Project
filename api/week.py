@@ -1,11 +1,10 @@
 from flask import Blueprint, jsonify
 
-from database.tables import Week, Course
+from database.tables import Week
 
 from . import api
 
 week_blueprint = Blueprint("week", __name__, url_prefix="/week")
-
 
 
 # NOTE: get single week
