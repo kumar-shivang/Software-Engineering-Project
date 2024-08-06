@@ -1,5 +1,6 @@
 from unittest.mock import MagicMock
 
+
 def test_get_week(client, mocker):
     # Mock week data with correct attributes
     mock_week = {
@@ -31,8 +32,6 @@ def test_get_week(client, mocker):
     assert response.status_code == 404
     assert response.get_json() == {"error": "Week not found"}
 
-import pytest
-from unittest.mock import MagicMock
 
 def test_get_assignments(client, mocker):
     # Mock assignment data
