@@ -8,5 +8,6 @@ def init_api(app: Flask) -> None:
     from .course import course_blueprint
     from .week import week_blueprint
     from .llm import llm_blueprint
+    from .assignment import assignment_blueprint
     app.register_blueprint(api)
     print("\033[92mAPI initialized successfully\033[0m")
