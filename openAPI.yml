@@ -1,0 +1,609 @@
+openapi: 3.0.1
+info:
+  title: Seek 2.0
+  version: 1.0.0
+  description: <h1>An AI-enabled platform for students</h1>
+    <p>Seek 2.0 is an AI-enabled platform that helps students learn more effectively. It provides students with personalized learning experiences, real-time feedback on assignments, and access to a chatbot for instant help with coding problems.</p>
+    <p>Seek 2.0 allows students to:</p>
+    <ul>
+    <li>View all courses and assignments</li>
+    <li>Submit assignments</li>
+    <li>Get feedback on assignments</li>
+    <li>Chat with the chatbot for help with coding problems</li>
+    <li>Get explanations of code errors</li>
+    </ul>
+
+    <h2>API Overview</h2>
+    <p>The Seek 2.0 API provides endpoints for students to interact with the platform. Students can view all courses and assignments, submit assignments, get feedback on assignments, and chat with the chatbot for help with coding problems.</p>
+
+    <h2>Created By-</h2>
+    <h3>Team 24</h3>
+    <p>Team Members -</p>
+    <ul>
+    <li>Shivang Kumar</li>
+    <li>Ajeet Kumar</li>
+    <li>Anwesha Ghosh</li>
+    <li>Bharti Bansal</li>
+    <li>Durgesh Puri Goswami</li>
+    <li>Maitreya Shelare</li>
+    <li>Shlok Sheth</li>
+    <li>Yogesh Bhatia</li>
+    </ul>
+
+servers: [ url: http://127.0.0.1:5000/api ]
+paths:
+  /student:
+    get:
+      summary: Get all students
+      tags:
+        - Students
+      responses:
+        200:
+          description: A list of all students
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Student"
+
+  /student/submit:
+    post:
+      summary: Submit an assignment
+      tags:
+        - Students
+        - Assignments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                student_id:
+                  type: string
+                  example: "60b6c8f3f2fd5e3a2c67e6d9"
+                assignment_id:
+                  type: string
+                  example: "60b6c9f1f2fd5e3a2c67e6e0"
+                answers:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  example: { "question_id": "answer" }
+      responses:
+        200:
+          description: Assignment submitted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Submitted
+
+  /student/{student_id}:
+    get:
+      summary: Get a student by ID
+      tags:
+        - Students
+      parameters:
+        - in: path
+          name: student_id
+          schema:
+            type: string
+          required: true
+          description: The ID of the student to retrieve
+      responses:
+        200:
+          description: Student details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+
+  /student/courses/{student_id}:
+    get:
+      summary: Get courses by student ID
+      tags:
+        - Students
+        - Courses
+      parameters:
+        - in: path
+          name: student_id
+          schema:
+            type: string
+          required: true
+          description: The ID of the student to retrieve courses for
+      responses:
+        200:
+          description: A list of courses for the student
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  courses:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Course"
+
+  /student/score:
+    get:
+      summary: Get the score of a student for an assignment
+      tags:
+        - Students
+        - Assignments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                student_id:
+                  type: string
+                  example: "60b6c8f3f2fd5e3a2c67e6d9"
+                assignment_id:
+                  type: string
+                  example: "60b6c9f1f2fd5e3a2c67e6e0"
+      responses:
+        200:
+          description: The score of the student for the assignment
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  score:
+                    type: number
+                    example: 95.0
+  /course:
+    get:
+      summary: Get all courses
+      tags:
+        - Courses
+      responses:
+        200:
+          description: A list of all courses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Course"
+
+  /course/{course_id}:
+    get:
+      summary: Get a course by ID
+      tags:
+        - Courses
+      parameters:
+        - in: path
+          name: course_id
+          schema:
+            type: string
+          required: true
+          description: The ID of the course to retrieve
+      responses:
+        200:
+          description: Course details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Course"
+        404:
+          description: Course not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Course not found
+
+  /course/students/{course_id}:
+    get:
+      summary: Get students by course ID
+      tags:
+        - Courses
+        - Students
+      parameters:
+        - in: path
+          name: course_id
+          schema:
+            type: string
+          required: true
+          description: The ID of the course to retrieve students for
+      responses:
+        200:
+          description: A list of students for the course
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  students:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Student"
+        404:
+          description: Course not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Course not found
+
+  /course/assignments/{course_id}:
+    get:
+      summary: Get assignments by course ID
+      tags:
+        - Courses
+        - Assignments
+      parameters:
+        - in: path
+          name: course_id
+          schema:
+            type: string
+          required: true
+          description: The ID of the course to retrieve assignments for
+      responses:
+        200:
+          description: A list of assignments for the course
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  assignments:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Assignment"
+        404:
+          description: Course not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Course not found
+
+  /course/weeks/{course_id}:
+    get:
+      summary: Get weeks by course ID
+      tags:
+        - Courses
+        - Weeks
+      parameters:
+        - in: path
+          name: course_id
+          schema:
+            type: string
+          required: true
+          description: The ID of the course to retrieve weeks for
+      responses:
+        200:
+          description: A list of weeks for the course
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  weeks:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Week"
+        404:
+          description: Course not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Course not found
+
+  /week/{week_id}:
+    get:
+      tags:
+        - Weeks
+      summary: Get a single week
+      description: Retrieve details of a specific week by its ID.
+      parameters:
+        - name: week_id
+          in: path
+          required: true
+          description: The ID of the week to retrieve
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A single week
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Week"
+        "404":
+          description: Week not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Week not found
+  /help/chat:
+    post:
+      summary: Chat with the chatbot
+      tags:
+        - Chatbot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Hello, how can I submit my assignment?"
+                session_id:
+                  type: string
+                  example: "b3f57db7-6b95-4e40-8b70-75e631007c22"
+      responses:
+        200:
+          description: Response from the chatbot
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_id:
+                    type: string
+                    example: "b3f57db7-6b95-4e40-8b70-75e631007c22"
+                  response:
+                    type: string
+                    example: "You can submit your assignment through the 'Submit' endpoint."
+
+  /help/explain:
+    post:
+      summary: Get explanation of code errors
+      tags:
+        - Feedback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  example: "for i in range(10): print(i)"
+                question:
+                  type: string
+                  example: "Why is this code not printing anything?"
+      responses:
+        200:
+          description: Explanation of the code
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+                    example: "The code is correct but you need to ensure it's inside a function or the main block to execute properly."
+
+  /help/feedback:
+    post:
+      summary: Get feedback on assignment submissions
+      tags:
+        - Assignments
+        - Feedback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assignment:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "60b6c8f3f2fd5e3a2c67e6d9"
+                      question:
+                        type: string
+                        example: "What is the capital of France?"
+                      answer:
+                        type: string
+                        example: "Paris"
+                      correct:
+                        type: boolean
+                        example: false
+      responses:
+        200:
+          description: Feedback on the assignment
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  feedback:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        question:
+                          type: string
+                          example: "What is the capital of France?"
+                        correct_answer:
+                          type: string
+                          example: "Paris"
+                        student_answer:
+                          type: string
+                          example: "Lyon"
+                        correct:
+                          type: boolean
+                          example: false
+
+components:
+  schemas:
+    Student:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/id"
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        courses:
+          type: array
+          items:
+            $ref: "#/components/schemas/_id"
+        grades:
+          type: object
+          additionalProperties:
+            type: number
+        submissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/_id"
+
+    Course:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/id"
+        name:
+          type: string
+        description:
+          type: string
+        weeks:
+          type: array
+          items:
+            $ref: "#/components/schemas/_id"
+        students:
+          type: array
+          items:
+            $ref: "#/components/schemas/_id"
+
+    Week:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/id"
+        number:
+          type: integer
+        course:
+          $ref: "#/components/schemas/Course"
+        assignments:
+          type: array
+          items:
+            $ref: "#/components/schemas/_id"
+        lectures:
+          type: array
+          items:
+            $ref: "#/components/schemas/_id"
+
+    Assignment:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/id"
+        name:
+          type: string
+        due_date:
+          type: string
+          format: date-time
+        graded:
+          type: boolean
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/_id"
+        week:
+          $ref: "#/components/schemas/Week"
+        course:
+          $ref: "#/components/schemas/Course"
+
+    Submission:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/id"
+        student:
+          $ref: "#/components/schemas/Student"
+        assignment:
+          $ref: "#/components/schemas/Assignment"
+        answers:
+          type: object
+          additionalProperties:
+            type: string
+        result:
+          type: object
+          additionalProperties:
+            type: number
+
+    Question:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/id"
+        question:
+          type: string
+        qtype:
+          type: string
+        answers:
+          type: array
+          items:
+            type: string
+        correct_answer:
+          type: array
+          items:
+            type: string
+        assignment:
+          $ref: "#/components/schemas/_id"
+        graded:
+          type: boolean
+
+    Lecture:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/id"
+        name:
+          type: string
+        week:
+          $ref: "#/components/schemas/Week"
+        index:
+          type: integer
+        url:
+          type: string
+        transcript:
+          type: string
+
+    id:
+      type: object
+      properties:
+        $oid:
+          type: string
+    _id:
+      type: string

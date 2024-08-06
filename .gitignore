@@ -1,5 +1,11 @@
 venv/
+.idea/
+.pytest_cache/
+.vscode/
 instance/
 __pycache__/
 *.pyc
 */__pycache__/
+coder.modelfile
+custom.modelfile
+notebook.ipynb
