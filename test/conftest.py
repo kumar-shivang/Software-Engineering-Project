@@ -19,11 +19,7 @@ def app():
     init_api(app)
 
     with app.app_context():
-        # connect(
-        #     "test", host="mongodb://localhost", mongo_client_class=mongomock.MongoClient
-        # )
         yield app
-        # disconnect()
 
 
 @fixture(scope="module")
