@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 
-from database.tables import Week, Assignment
+from database.tables import Assignment
 
 from . import api
 
