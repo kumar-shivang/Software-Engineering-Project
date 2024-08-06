@@ -48,10 +48,6 @@ def login():
         return jsonify({'message': 'Email and password are required'}), 400
     
     user = Student.query.filter_by(email=email).first()
-    print(user)
-    print(user.email)
-    print(user.password_hash)
-    print(bcrypt.check_password_hash(user.password_hash, password))
     if user and bcrypt.check_password_hash(user.password_hash, password):
         access_token = create_access_token(identity={'email': user.email})
         return jsonify({'access_token': access_token}), 200
