@@ -18,7 +18,11 @@ def get_students():
 def submit():
     data = request.json
     student = Student.objects(id=data["student_id"]).first()
+    if student is None:
+        return jsonify({"error": "Student not found"}), 404
     assignment = Assignment.objects(id=data["assignment_id"]).first()
+    if assignment is None:
+        return jsonify({"error": "Assignment not found"}), 404
     answers = data["answers"]
     student.submit(assignment.id, answers)
     return jsonify({"message": "Submitted"})
