@@ -7,8 +7,8 @@ from .chat import code_model, code_prompt, qa_model, qa_prompt, with_message_his
 from .store import get_session_history, save_session_history
 from api import api
 
-
 llm_blueprint = Blueprint("/llm", __name__, url_prefix="/help")
+
 
 # NOTE: chat with the chatbot
 @llm_blueprint.route("/chat", methods=["POST"])
@@ -37,7 +37,8 @@ def chat():
 
     return jsonify(json)
 
-# NOTE: Get explaination of code errors
+
+# NOTE: Get explanation of code errors
 @llm_blueprint.route("/explain", methods=["POST"])
 def explain():
     data = request.json
@@ -48,22 +49,23 @@ def explain():
     response = code_model.invoke(prompt).content
     return jsonify({"response": response})
 
-# NOTE: Get feedback from assginment submissions
+
+# NOTE: Get feedback from assignment submissions
 @llm_blueprint.route("/feedback", methods=["POST"])
 def feedback():
     data = request.json
     assignment = data["assignment"]
     response = dict()
     for q in assignment:
-        id = q["id"]
+        _id = q["id"]
         question = q["question"]
         answer = q["answer"]
         correct = q["correct"]
         if correct:
-            response[id] = "Correct"
+            response[_id] = "Correct"
         else:
             new_prompt = qa_prompt.format(question=question, answer=answer)
-            response[id] = qa_model.invoke(new_prompt).content
+            response[_id] = qa_model.invoke(new_prompt).content
     return jsonify(response)
 
 
