@@ -82,7 +82,7 @@ def login():
         token = jwt.encode(
             {
                 "student_id": str(student.id),
-                "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1),
+                "exp": datetime.datetime.now() + datetime.timedelta(hours=1),
             },
             current_app.config["SECRET_KEY"],
             algorithm="HS256",

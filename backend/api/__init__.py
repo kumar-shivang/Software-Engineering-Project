@@ -7,7 +7,7 @@ from database.tables import Student
 import jwt
 
 SECRET_KEY = "Secret"
-from flask_cors import CORS
+
 
 api = Blueprint("api", __name__, url_prefix="/api")
 
