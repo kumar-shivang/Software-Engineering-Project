@@ -70,7 +70,6 @@ class Student(Document):
     Represents a student in the system.
 
     Attributes:
-        id (int): The unique identifier for the student.
         name (str): The name of the student.
         email (str): The email address of the student.
         password (str): The password for the student's account.
@@ -122,8 +121,8 @@ class Student(Document):
             assignment_id (str): The ID of the assignment to submit.
             answers (List[str]): The list of answers for the assignment.
 
-        Raises:
-            ValueError: If the assignment with the given assignment_id is not found or if the student is not enrolled in the course.
+        Raises: ValueError: If the assignment with the given assignment_id is not found or if the student is not
+        enrolled in the course.
         """
         # check if the assignment exists
         assignment = Assignment.objects(id=assignment_id).first()
@@ -222,11 +221,15 @@ class Week(Document):
         Adds a new assignment to the week.
 
         Args:
-            assignment_name (str): The name of the assignment.
+            name (str): The name of the assignment.
             due_date (datetime): The due date of the assignment.
+
 
         Returns:
             Assignment: The newly created Assignment object.
+            :param due_date:
+            :param name:
+            :param graded:
         """
         assignment = Assignment(
             name=name,
@@ -247,7 +250,6 @@ class Week(Document):
             lecture_name (str): The name of the lecture.
             url (str): The URL of the lecture.
             transcript (str): The transcript of the lecture (optional).
-            index (int): The index of the lecture in the week.
 
         Returns:
             Lecture: The newly created Lecture object.
@@ -270,13 +272,11 @@ class Assignment(Document):
     Represents an assignment in the system.
 
     Attributes:
-        id (int): The unique identifier for the assignment.
         name (str): The name of the assignment.
         due_date (datetime): The due date of the assignment.
         course (Course): The course the assignment belongs to.
         graded (bool): A flag indicating if the assignment has been graded.
         questions (List[Question]): The list of questions in the assignment.
-        submissions (List[Submission]): The list of submissions for the assignment.
         week (Week): The week the assignment belongs to.
 
     Methods:
@@ -327,18 +327,17 @@ class Submission(Document):
     Represents a submission made by a student for an assignment.
 
     Attributes:
-        id (int): The unique identifier for the submission.
         student (Student): The student who made the submission.
         assignment (Assignment): The assignment the submission is for.
         answers (List[str]): The list of answers provided by the student.
-        grade (Dict[str, float]): The grade for the submission.
+        result (Dict[str, Any]): The result of the submission.
 
     Methods:
         grade_submission() -> Dict[str, float]:
             Grades the submission and returns the grade.
 
-        get_result() -> List[Dict[str, Any]]:
-            Returns the result of the submission as a list of dictionaries containing the question, answer, and correctness.
+        get_result() -> List[Dict[str, Any]]: Returns the result of the submission as a list of dictionaries
+        containing the question, answer, and correctness.
 
     """
 
@@ -370,18 +369,17 @@ class Submission(Document):
         return sum(self.result.values())
 
     def get_result(self):
+        result = []
         for question_id, answer in self.answers.items():
             question = Question.objects(id=question_id).first()
             if question is None:
                 raise ValueError("Question not found")
-            result = []
-            result.append(
-                {
-                    "question": question.question,
-                    "answer": answer,
-                    "correct": self.result["correct"],
-                }
-            )
+            result.append({
+                "question": question.question,
+                "answer": answer,
+                "correct": self.result["correct"],
+            })
+        return result
 
 
 class Question(Document):
@@ -389,14 +387,12 @@ class Question(Document):
     Represents a question in the system.
 
     Attributes:
-        id (int): The unique identifier for the question.
         question (str): The text of the question.
         qtype (str): The type of question (e.g., multiple_choice, short_answer, range, fill_in_the_blank).
         answers (List[str]): The list of possible answers.
         correct_answer (str): The correct answer to the question.
         assignment (Assignment): The assignment the question belongs to.
         graded (bool): A flag indicating if the question is for practice or graded.
-        grades (List[Dict[str, Any]]): The list of grades for the question.
     """
 
     question = StringField(required=True)
@@ -417,7 +413,8 @@ class Question(Document):
         if self.qtype == "multiple_choice":
             return answer == self.correct_answer
         elif self.qtype == "range":
-            # when the answer is a range of numbers first and second element of the answer list represent the minimum and maximum values respectively
+            # when the answer is a range of numbers first and second element of the answer list represent the minimum
+            # and maximum values respectively
             maximum = float(self.correct_answer[1])
             minimum = float(self.correct_answer[0])
             answer = float(answer[0])
