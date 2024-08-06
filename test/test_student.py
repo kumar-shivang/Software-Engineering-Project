@@ -144,5 +144,56 @@ def test_get_score(client, mocker):
     assert response.status_code == 404
     assert response.get_json() == {"error": "Assignment not found"}
 
-# TODO: add test for submit
-# TODO: add test for get_score
+
+def test_submit(client, mocker):
+    # Mock data
+    student_id = "12345"
+    assignment_id = "67890"
+    answers = {"question1_id": ["answer1"], "question2_id": ["answer2"]}
+
+    # Mock the student object
+    mock_student = MagicMock()
+    mock_student.submit = MagicMock()
+
+    # Patch the Student.objects(id=student_id).first() method
+    mocker.patch(
+        "database.tables.Student.objects",
+        return_value=MagicMock(first=MagicMock(return_value=mock_student)),
+    )
+
+    # Patch the Assignment.objects(id=assignment_id).first() method
+    mock_assignment = MagicMock()
+    mock_assignment.id = assignment_id  # Ensure assignment_id is correctly set
+    mocker.patch(
+        "database.tables.Assignment.objects",
+        return_value=MagicMock(first=MagicMock(return_value=mock_assignment)),
+    )
+
+    # Test valid submission
+    response = client.post("/api/student/submit",
+                           json={"student_id": student_id, "assignment_id": assignment_id, "answers": answers})
+    assert response.status_code == 200
+    assert response.get_json() == {"message": "Submitted"}
+    mock_student.submit.assert_called_once_with(assignment_id, answers)
+    # Test invalid student
+    mocker.patch(
+        "database.tables.Student.objects",
+        return_value=MagicMock(first=MagicMock(return_value=None)),
+    )
+    response = client.post("/api/student/submit", json={"student_id": "invalid_student_id", "assignment_id": assignment_id, "answers": answers})
+    assert response.status_code == 404
+    assert response.get_json() == {"error": "Student not found"}
+
+    # Test invalid assignment
+    mocker.patch(
+        "database.tables.Student.objects",
+        return_value=MagicMock(first=MagicMock(return_value=mock_student)),
+    )
+    mocker.patch(
+        "database.tables.Assignment.objects",
+        return_value=MagicMock(first=MagicMock(return_value=None)),
+    )
+    response = client.post("/api/student/submit", json={"student_id": student_id, "assignment_id": "invalid_assignment_id", "answers": answers})
+    assert response.status_code == 404
+    assert response.get_json() == {"error": "Assignment not found"}
+
