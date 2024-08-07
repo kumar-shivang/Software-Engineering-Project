@@ -27,4 +27,16 @@ def get_assignments(week_id):
     )
 
 
+@week_blueprint.route("/lectures/<week_id>", methods=["GET"])
+def get_lectures(week_id):
+    week = Week.objects(id=week_id).first()
+    if week is None:
+        return jsonify({"error": "Week not found"}), 404
+    lectures = week.lectures
+    return (
+        jsonify({"lectures": [lecture.to_json() for lecture in lectures]}),
+        200,
+    )
+
+
 api.register_blueprint(week_blueprint)
