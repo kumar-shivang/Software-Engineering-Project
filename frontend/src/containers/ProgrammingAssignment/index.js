@@ -3,7 +3,6 @@ import CodeEditor from "../../components/CodeEditor";
 
 const ProgrammingAssignment = () => {
 
-
     return (
         <>
             <p>Programming Assignment</p>

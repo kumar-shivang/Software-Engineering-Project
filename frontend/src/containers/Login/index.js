@@ -2,14 +2,12 @@ import React, { useEffect, useState } from 'react';
 import LoginService from '../../services/Login';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../context/AuthContext';
-import { toast } from 'react-toastify';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoadingData,setIsLoadingData] = useState(false);
-
   const { isAuthenticated , login, logout } = useAuth();
 
   useEffect(() => {
@@ -34,17 +32,12 @@ const LoginPage = () => {
       email,
       password
     }
-    try{
-      const response = await LoginService.login({ payload });
-      console.log("response",response)
-      if(response?.data?.access_token){
-         login(response.data.access_token);
-      }
-    }catch(err){
-        toast.error(err?.response?.data?.message)
-        logout();
+
+    const { token } = await LoginService.login({ payload }) || {};
+    if(token){
+        login(token);
     }
-     setIsLoadingData(false)
+    setIsLoadingData(false)
     
   };
 

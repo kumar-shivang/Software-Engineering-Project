@@ -21,7 +21,6 @@ This project is part of the Software Engineering course of BS in Data Science at
 Run Simulatenously
 sh start.sh
 
-
 Run Separately
 
 Terminal 1 (For Backend)

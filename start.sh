@@ -21,4 +21,4 @@ cd ../frontend
 yarn 
 
 # Run both the React and Flask servers concurrently
-npx concurrently "yarn start" "cd ../backend && source ../venv/bin/activate && flask run"
+npx concurrently "yarn start" "cd ../backend && flask run"

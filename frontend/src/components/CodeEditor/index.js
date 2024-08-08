@@ -11,10 +11,7 @@ import "ace-builds/src-noconflict/ext-language_tools"
 const CodeEditor = () => {
     const [code, setCode] = useState('// Write your code here');
 
-
-    function onChange(newValue) {
-        console.log("change", newValue)
-      }
+    function onChange(newValue) {}
 
     return (
         <div className="p-4">
