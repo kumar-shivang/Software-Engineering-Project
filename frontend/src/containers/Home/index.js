@@ -1,7 +1,6 @@
 import React, { memo } from 'react';
 
 const Home = () => {
-
     return (
         <div className="h-full p-8 bg-gray-100">
         <header className="flex justify-between items-center mb-8">
@@ -13,11 +12,11 @@ const Home = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 bg-gray-100">
             <div className="bg-white p-6 rounded-lg shadow-md">
                 <h3 className="text-xl font-semibold text-gray-800">Courses Enrolled</h3>
-                <p className="mt-2 text-3xl font-bold text-blue-500">5</p>
+                <p className="mt-2 text-3xl font-bold text-blue-500">3</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
                 <h3 className="text-xl font-semibold text-gray-800">Courses Completed</h3>
-                <p className="mt-2 text-3xl font-bold text-green-500">3</p>
+                <p className="mt-2 text-3xl font-bold text-green-500">5</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
                 <h3 className="text-xl font-semibold text-gray-800">Hours Studied</h3>
