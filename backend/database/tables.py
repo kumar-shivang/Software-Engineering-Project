@@ -374,11 +374,13 @@ class Submission(Document):
             question = Question.objects(id=question_id).first()
             if question is None:
                 raise ValueError("Question not found")
-            result.append({
-                "question": question.question,
-                "answer": answer,
-                "correct": self.result["correct"],
-            })
+            result.append(
+                {
+                    "question": question.question,
+                    "answer": answer,
+                    "correct": self.result["correct"],
+                }
+            )
         return result
 
 

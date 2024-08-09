@@ -1,10 +1,11 @@
 from flask import Blueprint, jsonify, request, g
-from database.tables import Assignment, Student, Submission
+from database.tables import Assignment, Submission
 from mongoengine.errors import ValidationError
 from . import api, token_required
 from api.utils.serializer import serialize_assignment, serialize_submission
 
 assignment_blueprint = Blueprint("assignment", __name__, url_prefix="/assignment")
+
 
 # NOTE: get single assignment
 @assignment_blueprint.route("/<assignment_id>", methods=["GET"])
@@ -12,8 +13,8 @@ assignment_blueprint = Blueprint("assignment", __name__, url_prefix="/assignment
 def get_assignment(assignment_id):
     assignment = Assignment.objects(id=assignment_id).first()
     if assignment is None:
-         return jsonify({ "data": [], "error": "Assignments not found" }), 404
-    return jsonify({ "data": serialize_assignment(assignment) }), 200
+        return jsonify({"data": [], "error": "Assignments not found"}), 404
+    return jsonify({"data": serialize_assignment(assignment)}), 200
 
 
 # Route for submitting answers for an assignment
@@ -42,5 +43,6 @@ def submit_assignment(assignment_id):
         return jsonify({"error": str(e)}), 400
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 api.register_blueprint(assignment_blueprint)

@@ -38,7 +38,11 @@ def test_get_course(client, mocker):
     # Patch the Course.objects(id=course_id).first() method to return a mock course
     mocker.patch(
         "database.tables.Course.objects",
-        return_value=MagicMock(first=MagicMock(return_value=MagicMock(to_json=MagicMock(return_value=mock_course))))
+        return_value=MagicMock(
+            first=MagicMock(
+                return_value=MagicMock(to_json=MagicMock(return_value=mock_course))
+            )
+        ),
     )
 
     # Test getting a course that exists
@@ -49,7 +53,7 @@ def test_get_course(client, mocker):
     # Patch the Course.objects(id=course_id).first() method to return None
     mocker.patch(
         "database.tables.Course.objects",
-        return_value=MagicMock(first=MagicMock(return_value=None))
+        return_value=MagicMock(first=MagicMock(return_value=None)),
     )
 
     # Test getting a course that does not exist
@@ -62,14 +66,19 @@ def test_get_students(client, mocker):
     # Mock student data
     mock_students = [
         {"name": "John Doe", "email": "john@example.com"},
-        {"name": "Jane Doe", "email": "jane@example.com"}
+        {"name": "Jane Doe", "email": "jane@example.com"},
     ]
 
     # Patch the Course.objects(id=course_id).first() method to return a mock course with students
-    mock_course = MagicMock(students=[MagicMock(to_json=MagicMock(return_value=student)) for student in mock_students])
+    mock_course = MagicMock(
+        students=[
+            MagicMock(to_json=MagicMock(return_value=student))
+            for student in mock_students
+        ]
+    )
     mocker.patch(
         "database.tables.Course.objects",
-        return_value=MagicMock(first=MagicMock(return_value=mock_course))
+        return_value=MagicMock(first=MagicMock(return_value=mock_course)),
     )
 
     # Test getting students for a course that exists
@@ -80,7 +89,7 @@ def test_get_students(client, mocker):
     # Patch the Course.objects(id=course_id).first() method to return None
     mocker.patch(
         "database.tables.Course.objects",
-        return_value=MagicMock(first=MagicMock(return_value=None))
+        return_value=MagicMock(first=MagicMock(return_value=None)),
     )
 
     # Test getting students for a course that does not exist
@@ -93,13 +102,28 @@ def test_get_assignments(client, mocker):
     # Mock data
     course_id = "12345"
     assignment_data = [
-        {"id": "1", "name": "Assignment 1", "due_date": str(datetime(2024, 8, 6)), "graded": False, "questions": [], "week": "week1"},
-        {"id": "2", "name": "Assignment 2", "due_date": str(datetime(2024, 8, 13)), "graded": True, "questions": [], "week": "week2"},
+        {
+            "id": "1",
+            "name": "Assignment 1",
+            "due_date": str(datetime(2024, 8, 6)),
+            "graded": False,
+            "questions": [],
+            "week": "week1",
+        },
+        {
+            "id": "2",
+            "name": "Assignment 2",
+            "due_date": str(datetime(2024, 8, 13)),
+            "graded": True,
+            "questions": [],
+            "week": "week2",
+        },
     ]
 
     # Mock the assignment objects
     mock_assignments = [
-        MagicMock(to_json=MagicMock(return_value=assignment)) for assignment in assignment_data
+        MagicMock(to_json=MagicMock(return_value=assignment))
+        for assignment in assignment_data
     ]
 
     # Mock the course object
@@ -136,9 +160,7 @@ def test_get_weeks(client, mocker):
     ]
 
     # Mock the week objects
-    mock_weeks = [
-        MagicMock(to_json=MagicMock(return_value=week)) for week in week_data
-    ]
+    mock_weeks = [MagicMock(to_json=MagicMock(return_value=week)) for week in week_data]
 
     # Mock the course object
     mock_course = MagicMock()

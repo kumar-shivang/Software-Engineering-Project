@@ -3,15 +3,16 @@ from unittest.mock import MagicMock
 
 def test_get_assignment(client, mocker):
     # Mock assignment data
-    mock_assignment = {
-        "name": "Assignment 1",
-        "due_date": "2023-01-01"
-    }
+    mock_assignment = {"name": "Assignment 1", "due_date": "2023-01-01"}
 
     # Patch the Assignment.objects(id=assignment_id).first() method to return a mock assignment
     mocker.patch(
         "database.tables.Assignment.objects",
-        return_value=MagicMock(first=MagicMock(return_value=MagicMock(to_json=MagicMock(return_value=mock_assignment))))
+        return_value=MagicMock(
+            first=MagicMock(
+                return_value=MagicMock(to_json=MagicMock(return_value=mock_assignment))
+            )
+        ),
     )
 
     # Test getting an assignment that exists
@@ -22,7 +23,7 @@ def test_get_assignment(client, mocker):
     # Patch the Assignment.objects(id=assignment_id).first() method to return None
     mocker.patch(
         "database.tables.Assignment.objects",
-        return_value=MagicMock(first=MagicMock(return_value=None))
+        return_value=MagicMock(first=MagicMock(return_value=None)),
     )
 
     # Test getting an assignment that does not exist

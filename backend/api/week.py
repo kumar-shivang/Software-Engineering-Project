@@ -5,6 +5,7 @@ from api.utils.serializer import serialize_doc
 
 week_blueprint = Blueprint("week", __name__, url_prefix="/week")
 
+
 # NOTE: get single week
 @week_blueprint.route("/<week_id>", methods=["GET"])
 def get_week(week_id):
@@ -12,7 +13,7 @@ def get_week(week_id):
     if not courses:
         return jsonify({"data": [], "message": "No courses found"}), 200
     courses_list = [serialize_doc(course) for course in courses]
-    return jsonify({ "data": courses_list }), 200
+    return jsonify({"data": courses_list}), 200
 
     week = Week.objects(id=week_id).first()
     if week is None:

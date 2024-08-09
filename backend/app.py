@@ -16,5 +16,6 @@ def get_all_routes():
     url_map = app.url_map
     return jsonify({rule.endpoint: rule.rule for rule in url_map.iter_rules()})
 
+
 if __name__ == "__main__":
     app.run(debug=True)

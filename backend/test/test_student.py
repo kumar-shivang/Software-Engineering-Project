@@ -118,7 +118,10 @@ def test_get_score(client, mocker):
     )
 
     # Test with an existing student and assignment
-    response = client.get("/api/student/score", json={"student_id": student_id, "assignment_id": assignment_id})
+    response = client.get(
+        "/api/student/score",
+        json={"student_id": student_id, "assignment_id": assignment_id},
+    )
     assert response.status_code == 200
     assert response.get_json() == {"score": mock_score}
 
@@ -127,7 +130,10 @@ def test_get_score(client, mocker):
         "database.tables.Student.objects",
         return_value=MagicMock(first=MagicMock(return_value=None)),
     )
-    response = client.get("/api/student/score", json={"student_id": "non_existing_id", "assignment_id": assignment_id})
+    response = client.get(
+        "/api/student/score",
+        json={"student_id": "non_existing_id", "assignment_id": assignment_id},
+    )
     assert response.status_code == 404
     assert response.get_json() == {"error": "Student not found"}
 
@@ -140,7 +146,10 @@ def test_get_score(client, mocker):
         "database.tables.Assignment.objects",
         return_value=MagicMock(first=MagicMock(return_value=None)),
     )
-    response = client.get("/api/student/score", json={"student_id": student_id, "assignment_id": "non_existing_id"})
+    response = client.get(
+        "/api/student/score",
+        json={"student_id": student_id, "assignment_id": "non_existing_id"},
+    )
     assert response.status_code == 404
     assert response.get_json() == {"error": "Assignment not found"}
 
@@ -170,8 +179,14 @@ def test_submit(client, mocker):
     )
 
     # Test valid submission
-    response = client.post("/api/student/submit",
-                           json={"student_id": student_id, "assignment_id": assignment_id, "answers": answers})
+    response = client.post(
+        "/api/student/submit",
+        json={
+            "student_id": student_id,
+            "assignment_id": assignment_id,
+            "answers": answers,
+        },
+    )
     assert response.status_code == 200
     assert response.get_json() == {"message": "Submitted"}
     mock_student.submit.assert_called_once_with(assignment_id, answers)
@@ -180,7 +195,14 @@ def test_submit(client, mocker):
         "database.tables.Student.objects",
         return_value=MagicMock(first=MagicMock(return_value=None)),
     )
-    response = client.post("/api/student/submit", json={"student_id": "invalid_student_id", "assignment_id": assignment_id, "answers": answers})
+    response = client.post(
+        "/api/student/submit",
+        json={
+            "student_id": "invalid_student_id",
+            "assignment_id": assignment_id,
+            "answers": answers,
+        },
+    )
     assert response.status_code == 404
     assert response.get_json() == {"error": "Student not found"}
 
@@ -193,7 +215,13 @@ def test_submit(client, mocker):
         "database.tables.Assignment.objects",
         return_value=MagicMock(first=MagicMock(return_value=None)),
     )
-    response = client.post("/api/student/submit", json={"student_id": student_id, "assignment_id": "invalid_assignment_id", "answers": answers})
+    response = client.post(
+        "/api/student/submit",
+        json={
+            "student_id": student_id,
+            "assignment_id": "invalid_assignment_id",
+            "answers": answers,
+        },
+    )
     assert response.status_code == 404
     assert response.get_json() == {"error": "Assignment not found"}
-

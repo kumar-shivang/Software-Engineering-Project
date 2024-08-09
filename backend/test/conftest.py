@@ -39,4 +39,3 @@ def init_db():
 @fixture(scope="module")
 def runner(app):
     return app.test_cli_runner()
-

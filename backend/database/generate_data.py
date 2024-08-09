@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from .tables import Course, Lecture, Question, Student, Week
 
+
 def generate_students():
     students = [
         {"name": "Alice", "email": "alice@email.com", "password": "password123"},

@@ -8,12 +8,14 @@ from . import api, token_required
 
 student_blueprint = Blueprint("student", __name__, url_prefix="/student")
 
+
 # NOTE: return all students
 @student_blueprint.route("/", methods=["GET"])
 @token_required
 def get_students():
     students = Student.objects().to_json()
     return students
+
 
 # NOTE: assignment submission
 @student_blueprint.route("/submit", methods=["POST"])
@@ -28,6 +30,7 @@ def submit():
     student.submit(assignment.id, answers)
     return jsonify({"message": "Submitted"})
 
+
 # NOTE: get student by id
 @student_blueprint.route("/<student_id>", methods=["GET"])
 @token_required
@@ -36,6 +39,7 @@ def get_student(student_id):
     if student is None:
         return jsonify({"error": "Student not found"}), 404
     return student.to_json()
+
 
 # NOTE: get courses by student id
 @student_blueprint.route("/courses/<student_id>", methods=["GET"])
@@ -46,6 +50,7 @@ def get_courses(student_id):
         return jsonify({"error": "Student not found"}), 404
     courses = student.courses
     return jsonify({"courses": [course.to_json() for course in courses]})
+
 
 # NOTE: get assignments by student id
 @student_blueprint.route("/score", methods=["GET"])
@@ -59,26 +64,32 @@ def get_score():
         return jsonify({"error": "Assignment not found"}), 404
     return jsonify({"score": student.get_score(assignment_id)})
 
+
 # NOTE: student login
 @student_blueprint.route("/login", methods=["POST"])
 def login():
     data = request.json
-    print("data",data)
+    print("data", data)
     email = data.get("email")
     password = data.get("password")
 
     if not email or not password:
         return jsonify({"error": "Email and password are required"}), 400
 
-    student = Student.objects(email=email,password=password).first()
+    student = Student.objects(email=email, password=password).first()
     if student:
-        print("student",student)
-        token = jwt.encode({
-            "student_id": str(student.id),
-            "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1)
-        }, current_app.config['SECRET_KEY'], algorithm="HS256")
+        print("student", student)
+        token = jwt.encode(
+            {
+                "student_id": str(student.id),
+                "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1),
+            },
+            current_app.config["SECRET_KEY"],
+            algorithm="HS256",
+        )
         return jsonify({"message": "Login successful", "token": token})
     else:
         return jsonify({"error": "Invalid username or password"}), 401
+
 
 api.register_blueprint(student_blueprint)
