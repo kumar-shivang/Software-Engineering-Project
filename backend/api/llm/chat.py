@@ -8,9 +8,9 @@ from langchain_ollama import ChatOllama
 
 from .store import get_session_history
 
-
 chat_model = ChatOllama(
     model="qwen:0.5b",
+    # model = "phi3:mini",
     temperature=0.5,
     max_tokens=100,
     top_p=0.7,
@@ -30,7 +30,7 @@ qa_model = ChatOllama(
 )
 
 code_model = ChatOllama(
-    model="deepseek-coder",
+    model="coder",
     temperature=0.5,
     max_tokens=100,
     top_p=0.7,
