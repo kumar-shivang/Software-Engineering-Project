@@ -30,7 +30,7 @@ info:
     <li>Yogesh Bhatia</li>
     </ul>
 
-servers: [ url: http://127.0.0.1:5000/api ]
+servers: [url: http://127.0.0.1:5000/api]
 paths:
   /student:
     get:
@@ -418,23 +418,9 @@ paths:
             schema:
               type: object
               properties:
-                assignment:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: "60b6c8f3f2fd5e3a2c67e6d9"
-                      question:
-                        type: string
-                        example: "What is the capital of France?"
-                      answer:
-                        type: string
-                        example: "Paris"
-                      correct:
-                        type: boolean
-                        example: false
+                submission_id:
+                  type: string
+                  example: "60b6c8f3f2fd5e3a2c67e6d9"
       responses:
         200:
           description: Feedback on the assignment

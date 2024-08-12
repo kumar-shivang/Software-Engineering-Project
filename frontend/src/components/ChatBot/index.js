@@ -5,6 +5,7 @@ function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
+  const [sessionId, setSessionId] = useState('');
   const [isLoadingData,setIsLoadingData] = useState(false)
 
   const toggleChat = () => {
@@ -21,11 +22,11 @@ function Chatbot() {
     const newMessages = [...messages, { sender: 'You', text: input }];
     setMessages(newMessages);
     setInput('');
-
     setIsLoadingData(true);
-    const { data } = await ChatbotService.talkToBot(input) || {};
+    const data = await ChatbotService.talkToBot({input,sessionId}) || {};
     setIsLoadingData(false);
-    setMessages([...newMessages, { sender: 'Bot', text: data }]);
+    setSessionId(data.session_id)
+    setMessages([...newMessages, { sender: 'Bot', text: data.response }]);
   };
 
   return (

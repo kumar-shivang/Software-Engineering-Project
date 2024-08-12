@@ -122,3 +122,16 @@ def serialize_lecture(lecture):
         "index": lecture.index,
     }
 
+
+def serialize_programming_assignment(programming_assignment):
+    return {
+        "id": str(programming_assignment.id),
+        "name": programming_assignment.name,
+        "description": programming_assignment.description,
+        "due_date": (
+            programming_assignment.due_date.isoformat()
+            if programming_assignment.due_date
+            else None
+        ),
+        "graded": programming_assignment.graded,
+    }

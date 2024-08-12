@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify
-from database.models import Week
+from database.tables import Week
 from . import api
-from api.utils.serializer import serialize_doc
+
+from api.utils.serializer import serialize_programming_assignment
 
 week_blueprint = Blueprint("week", __name__, url_prefix="/week")
 
@@ -37,6 +38,17 @@ def get_lectures(week_id):
         jsonify({"lectures": [lecture.to_json() for lecture in lectures]}),
         200,
     )
+
+
+@week_blueprint.route("/programming_assignments/<week_id>", methods=["GET"])
+def get_programming_assignments(week_id):
+    week = Week.objects(id=week_id).first()
+    if week is None:
+        return jsonify({"error": "Week not found"}), 404
+    programming_assignments = map(
+        serialize_programming_assignment, week.programming_assignments
+    )
+    return jsonify({"programming_assignments": list(programming_assignments)})
 
 
 api.register_blueprint(week_blueprint)

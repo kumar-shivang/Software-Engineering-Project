@@ -3,11 +3,12 @@
 # Check if the virtual environment directory exists
 if [ ! -d "venv" ]; then
   # Create a virtual environment
-  python3 -m venv venv
+  python3 -m venv ./backend/venv
 fi
 
+
 # Activate the virtual environment
-source venv/bin/activate
+source ./backend/venv/bin/activate
 
 cd backend/
 

@@ -1,10 +1,14 @@
+from ast import Sub
 import jwt
 import datetime
 from flask import Blueprint, jsonify, request, current_app, g
 from werkzeug.security import check_password_hash
 from functools import wraps
-from database.tables import Assignment, Student
+
+from yaml import serialize
+from database.tables import Assignment, Student, Submission
 from . import api, token_required
+from api.utils.serializer import serialize_submission
 
 student_blueprint = Blueprint("student", __name__, url_prefix="/student")
 
@@ -22,13 +26,29 @@ def get_students():
 @token_required
 def submit():
     data = request.json
+    print(data)
     student = g.current_user
     assignment = Assignment.objects(id=data["assignment_id"]).first()
     if assignment is None:
         return jsonify({"error": "Assignment not found"}), 404
     answers = data["answers"]
-    student.submit(assignment.id, answers)
-    return jsonify({"message": "Submitted"})
+    submission_id = student.submit(assignment.id, answers)
+    return jsonify(
+        {"message": "Submitted", "data": {"submission_id": str(submission_id)}}
+    )
+
+
+@student_blueprint.route("/submit/programming/<assignment_id>", methods=["POST"])
+@token_required
+def submit_programming(assignment_id):
+    data = request.json
+    student = g.current_user
+    assignment = Assignment.objects(id=assignment_id).first()
+    if assignment is None:
+        return jsonify({"error": "Assignment not found"}), 404
+    code = data["code"]
+    result = student.submit_programming(assignment.id, code)
+    return jsonify({"message": "Submitted", "result": result})
 
 
 # NOTE: get student by id
@@ -90,6 +110,17 @@ def login():
         return jsonify({"message": "Login successful", "token": token})
     else:
         return jsonify({"error": "Invalid username or password"}), 401
+
+
+@student_blueprint.route("/get_result/<submission_id>", methods=["GET"])
+@token_required
+def get_result(submission_id):
+    submission = Submission.objects(id=submission_id).first()
+    if not submission:
+        return jsonify({"error": "Submission not found"}), 404
+    print(submission.to_json())
+    data = submission.get_result()
+    return jsonify({"data": data})
 
 
 api.register_blueprint(student_blueprint)

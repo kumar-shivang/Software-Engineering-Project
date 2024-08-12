@@ -1,4 +1,6 @@
 from datetime import datetime
+import io
+import sys
 
 from mongoengine import (
     BooleanField,
@@ -11,6 +13,7 @@ from mongoengine import (
     StringField,
 )
 
+
 """
     +---------------+               +---------------+
     |   Student     |               |    Course     |
@@ -22,7 +25,6 @@ from mongoengine import (
  |  | courses       |               |               |
  |  | grades        |               +---------------+
  |  | submissions   |                     |
- |                                        |
  |  +---------------+                     |
  |                                        v
  |  +---------------+               +---------------+
@@ -92,6 +94,7 @@ class Student(Document):
     courses = ListField(ReferenceField("Course"))
     grades = DictField()  # {assignment_id: grade}
     submissions = ListField(ReferenceField("Submission"))
+    programming_submissions = ListField(ReferenceField("ProgrammingSubmission"))
 
     def enroll(self, course_id: str) -> None:
         """
@@ -132,6 +135,7 @@ class Student(Document):
             self not in assignment.week.course.students
         ):  # if student is not enrolled in the course
             raise ValueError("Student not enrolled in the course")
+        # print(answers)
 
         submission = Submission(
             student=self,
@@ -147,6 +151,39 @@ class Student(Document):
         elif self.grades[assignment_id] < submission.get_total_grade():
             self.grades[assignment_id] = submission.get_total_grade()
         self.save()
+        return submission.id
+
+    def submit_programming_assignment(self, assignment_id: str, code: str) -> None:
+        """
+        Submits a programming assignment with the given assignment_id.
+
+        Args:
+            assignment_id (str): The ID of the programming assignment to submit.
+            code (str): The code to submit.
+
+        Raises: ValueError: If the assignment with the given assignment_id is not found or if the student is not
+        enrolled in the course.
+        """
+        # check if the assignment exists
+        assignment = ProgrammingAssignment.objects(id=assignment_id).first()
+        if assignment is None:
+            raise ValueError("Assignment not found")
+        elif self not in assignment.week.course.students:
+            raise ValueError("Student not enrolled in the course")
+
+        submission = ProgrammingSubmission(
+            student=self, assignment=assignment, code=code
+        )
+        submission.save()
+        submission.grade_submission()
+        self.programming_submissions.append(submission)
+        assignment_id = str(assignment_id)
+        if assignment_id not in self.grades.keys():
+            self.grades[assignment_id] = submission.get_total_grade()
+        elif self.grades[assignment_id] < submission.get_total_grade():
+            self.grades[assignment_id] = submission.get_total_grade()
+        self.save()
+        return submission
 
     def get_score(self, assignment_id: str):
         """
@@ -213,6 +250,7 @@ class Week(Document):
     course = ReferenceField(Course, required=True)
     assignments = ListField(ReferenceField("Assignment"))
     lectures = ListField(ReferenceField("Lecture"))
+    programming_assignments = ListField(ReferenceField("ProgrammingAssignment"))
 
     def add_assignment(
         self, name: str, due_date: datetime, graded: bool
@@ -265,6 +303,29 @@ class Week(Document):
         self.lectures.append(lecture)
         self.save()
         return lecture
+
+    def add_programming_assignment(
+        self, name, description, starter_code="", runner_code=""
+    ) -> None:
+        """
+        Adds a new programming assignment to the week.
+
+        Args:
+            name (str): The name of the programming assignment.
+            description (str): The description of the programming assignment.
+            starter_code (str): The starter code for the programming assignment.
+        """
+        programming_assignment = ProgrammingAssignment(
+            name=name,
+            description=description,
+            week=self,
+            starter_code=starter_code,
+            runner_code=runner_code,
+        )
+        programming_assignment.save()
+        self.programming_assignments.append(programming_assignment)
+
+        self.save()
 
 
 class Assignment(Document):
@@ -370,15 +431,18 @@ class Submission(Document):
 
     def get_result(self):
         result = []
+        print(self.answers)
         for question_id, answer in self.answers.items():
+            print(question_id)
             question = Question.objects(id=question_id).first()
             if question is None:
                 raise ValueError("Question not found")
             result.append(
                 {
+                    "id": question_id,
                     "question": question.question,
                     "answer": answer,
-                    "correct": self.result["correct"],
+                    "correct": self.result[question_id],
                 }
             )
         return result
@@ -400,7 +464,7 @@ class Question(Document):
     question = StringField(required=True)
     qtype = StringField(required=True)
     answers = ListField(StringField())  # ['animal','machine'....]
-    correct_answer = ListField(StringField())  # ["animal"]
+    correct_answer = ListField(StringField())  # ["animal"],[2,3,4]
     assignment = ReferenceField(Assignment)
     graded = BooleanField(default=False)
 
@@ -434,3 +498,136 @@ class Lecture(Document):
     index = IntField(required=True)
     url = StringField(required=True)
     transcript = StringField()
+
+
+class ProgrammingAssignment(Document):
+    """
+    Represents a programming assignment in the system.
+
+    Attributes:
+        language (str): The programming language for the assignment.
+        starter_code (str): The starter code for the assignment.
+        test_cases (List[str]): The list of test cases for the assignment.
+
+    """
+
+    name = StringField(required=True)
+    description = StringField(required=True)
+    language = StringField(default="python")
+    starter_code = StringField(required=False)
+    runner_code = StringField(required=False)
+    test_cases = ListField(DictField())  # {'input': 'output'}
+    week = ReferenceField(Week)
+    due_date = DateTimeField(required=False)
+    graded = BooleanField(default=False)
+
+    def add_test_case(self, input: str, output: str):
+        d = {input: output}
+        self.test_cases.append(d)
+        self.save()
+
+
+class ProgrammingSubmission(Document):
+    """
+    Represents a programming submission made by a student for a programming assignment.
+
+    Attributes:
+        code (str): The code submitted by the student.
+        test_results (List[Dict[str, Any]]): The results of running the test cases on the code.
+
+    Methods:
+        grade_submission() -> Dict[str, float]:
+            Grades the submission and returns the grade.
+
+        get_test_results() -> List[Dict[str, Any]]:
+            Returns the results of running the test cases on the code.
+
+    """
+
+    code = StringField(required=True)
+    test_results = ListField(DictField())  # [{test_case: result}]
+    student = ReferenceField(Student)
+    assignment = ReferenceField(ProgrammingAssignment)
+
+    @staticmethod
+    def run_code(code):
+        """
+        Runs the code with preset variables and returns the result.
+
+        Args:
+            code (str): The code to run.
+            preset_vars (dict, optional): Preset variables to be available during code execution.
+
+        Returns:
+            Dict[str, Any]: The result of running the code.
+        """
+
+        old_stdout = sys.stdout
+        new_stdout = io.StringIO()
+        sys.stdout = new_stdout
+        try:
+            exec(code, {})
+        except Exception as e:
+            result = {"error": str(e)}
+        else:
+            result = {"output": new_stdout.getvalue()}
+
+        # Restore stdout
+        sys.stdout = old_stdout
+
+        return result
+
+    def grade_submission(self):
+        """
+        Grades the submission and returns the grade.
+
+        Returns:
+            Dict[str, float]: The grade for the submission.
+        """
+
+        total_tests = len(self.assignment.test_cases)
+        passed_tests = 0
+
+        for test_case in self.assignment.test_cases:
+
+            input_val, expected_output = list(test_case.items())[0]
+            if "\n" in input_val:
+                input_val = input_val.split("\n")
+
+            if self.assignment.starter_code:
+                code = (
+                    self.assignment.starter_code.format(*input_val) + "\n" + self.code
+                )
+            else:
+                code = self.code
+            if self.assignment.runner_code:
+                code += "\n" + self.assignment.runner_code
+
+            result = self.run_code(code)
+            if result.get("error"):
+                self.test_results.append(
+                    {
+                        "input": input_val,
+                        "output": result.get("error"),
+                        "expected_output": expected_output,
+                        "match": False,
+                    }
+                )
+                continue
+            if result.get("output").strip() == expected_output:
+                passed_tests += 1
+
+            self.test_results.append(
+                {
+                    "input": input_val,
+                    "output": result.get("output"),
+                    "expected_output": expected_output,
+                    "match": result.get("output").strip() == expected_output,
+                }
+            )
+
+        grade = (passed_tests / total_tests) * 100
+        return {"grade": grade, "test_results": self.test_results}
+
+    def get_total_grade(self):
+        return sum([result["match"] for result in self.test_results])

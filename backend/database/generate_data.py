@@ -1,6 +1,9 @@
 from datetime import datetime, timedelta
+from logger import log
 
-from .tables import Course, Lecture, Question, Student, Week
+from .tables import Course, Lecture, Question, Student, Week, ProgrammingAssignment
+
+log.info("Generating data")
 
 
 def generate_students():
@@ -17,6 +20,7 @@ def generate_students():
                 password=student["password"],
             )
             student.save()
+            log.info(f"Created student {student.name} with id {student.id}")
 
 
 def generate_courses():
@@ -38,6 +42,7 @@ def generate_courses():
         if not Course.objects(name=course["name"]):
             course = Course(name=course["name"], description=course["description"])
             course.save()
+            log.info(f"Created course {course.name} with id {course.id}")
 
 
 def generate_enrollments():
@@ -47,6 +52,7 @@ def generate_enrollments():
         for course in courses:
             if student not in course.students and course not in student.courses:
                 student.enroll(course.id)
+        log.info(f"Enrolled student {student.name} in all courses")
 
 
 def generate_weeks():
@@ -149,6 +155,7 @@ Never gonna say goodbye
                     transcript=lecture["transcript"],
                 )
         week.save()
+        log.info(f"Created lectures for course {course.name}")
 
 
 def generate_assignments():
@@ -218,6 +225,96 @@ def generate_questions():
         week.save()
 
 
+def generate_programming_assignments():
+    programming_assignments = [
+        {
+            "name": "Programming Assignment 1",
+            "description": "Print hello world",
+        },
+        {
+            "name": "Programming Assignment 2",
+            "description": "Write a function with name `add` to add two numbers",
+            "starter_code": """
+a = int({})
+b = int({})
+""",
+            "runner_code": """
+print(add(a, b))""",
+        },
+        {
+            "name": "Programming Assignment 3",
+            "description": "Write a function named `factorial` to find the factorial of a number",
+            "starter_code": """
+a = int({})
+""",
+            "runner_code": """
+print(factorial(a))""",
+        },
+    ]
+    for course in Course.objects():
+        week = Week.objects(course=course.id, number=1).first()
+        for pa in programming_assignments:
+            if not ProgrammingAssignment.objects(
+                week=week.id, description=pa["description"]
+            ):
+                week.add_programming_assignment(
+                    name=pa["name"],
+                    description=pa["description"],
+                    starter_code=pa.get("starter_code", ""),
+                    runner_code=pa.get("runner_code", ""),
+                )
+        week.save()
+
+    test_cases_p1 = [
+        {
+            "input": "",
+            "output": "Hello, World!",
+        }
+    ]
+    test_cases_p2 = [
+        {
+            "input": "2\n3",
+            "output": "5",
+        },
+        {
+            "input": "5\n7",
+            "output": "12",
+        },
+    ]
+
+    test_cases_p3 = [
+        {
+            "input": "5",
+            "output": "120",
+        },
+        {
+            "input": "3",
+            "output": "6",
+        },
+    ]
+
+    for assignment in ProgrammingAssignment.objects():
+        if assignment.name == "Programming Assignment 1":
+            for test_case in test_cases_p1:
+                if len(assignment.test_cases) < len(test_cases_p1):
+                    assignment.add_test_case(
+                        input=test_case["input"], output=test_case["output"]
+                    )
+        elif assignment.name == "Programming Assignment 2":
+            for test_case in test_cases_p2:
+                if len(assignment.test_cases) < len(test_cases_p2):
+                    assignment.add_test_case(
+                        input=test_case["input"], output=test_case["output"]
+                    )
+        elif assignment.name == "Programming Assignment 3":
+            if len(assignment.test_cases) < len(test_cases_p3):
+                for test_case in test_cases_p3:
+                    assignment.add_test_case(
+                        input=test_case["input"], output=test_case["output"]
+                    )
+        assignment.save()
+
+
 def generate_all():
     generate_students()
     generate_courses()
@@ -226,3 +323,6 @@ def generate_all():
     generate_lectures()
     generate_assignments()
     generate_questions()
+    generate_programming_assignments()
+
+    print("Data generated successfully")
