@@ -3,7 +3,6 @@ from flask_cors import CORS
 from api import init_api
 from database import init_db
 from database.generate_data import generate_all
-from logger import log
 
 app = Flask(__name__)
 init_api(app)
@@ -17,8 +16,6 @@ def get_all_routes():
     url_map = app.url_map
     return jsonify({rule.endpoint: rule.rule for rule in url_map.iter_rules()})
 
-
-print({rule.endpoint: rule.rule for rule in app.url_map.iter_rules()})
 
 if __name__ == "__main__":
     app.run(debug=True)
