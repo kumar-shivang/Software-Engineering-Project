@@ -6,6 +6,7 @@ from langchain_core.messages import AIMessage, HumanMessage
 from .chat import code_model, code_prompt, qa_model, qa_prompt, with_message_history
 from .store import get_session_history, save_session_history
 from api import api
+from database.tables import ProgrammingSubmission, Submission
 
 llm_blueprint = Blueprint("/llm", __name__, url_prefix="/help")
 
@@ -16,7 +17,10 @@ def chat():
     data = request.json
     message = data["message"]
 
-    session_id = data.get("session_id", str(uuid.uuid4()))
+    if "session_id" in data and len(data["session_id"]) > 0:
+        session_id = data["session_id"]
+    else:
+        session_id = uuid.uuid4().hex
 
     config = {"configurable": {"session_id": session_id}}
 
@@ -33,7 +37,10 @@ def chat():
 
     # Save the updated session history
     save_session_history(session_id, history)
-    json = {"session_id": session_id, "response": response.content}
+    json = {
+        "response": response.content,
+        "session_id": session_id,
+    }
 
     return jsonify(json)
 
@@ -42,9 +49,12 @@ def chat():
 @llm_blueprint.route("/explain", methods=["POST"])
 def explain():
     data = request.json
-    # message = data['message']
-    code = data["code"]
-    question = data["question"]
+    submission_id = data["submission_id"]
+    submission = ProgrammingSubmission.objects(id=submission_id).first()
+    if not submission:
+        return jsonify({"error": "Submission not found"})
+    code = submission.code
+    question = submission.assignment.description
     prompt = code_prompt.format(code=code, question=question)
     response = code_model.invoke(prompt).content
     return jsonify({"response": response})
@@ -54,9 +64,11 @@ def explain():
 @llm_blueprint.route("/feedback", methods=["POST"])
 def feedback():
     data = request.json
-    assignment = data["assignment"]
+    submission_id = data["submission_id"]
+    submission = Submission.objects(id=submission_id).first()
+    result = submission.get_result()
     response = dict()
-    for q in assignment:
+    for q in result:
         _id = q["id"]
         question = q["question"]
         answer = q["answer"]
@@ -66,6 +78,7 @@ def feedback():
         else:
             new_prompt = qa_prompt.format(question=question, answer=answer)
             response[_id] = qa_model.invoke(new_prompt).content
+
     return jsonify(response)
 
 
