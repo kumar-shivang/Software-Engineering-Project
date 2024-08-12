@@ -16,11 +16,14 @@ const AssignmentService = {
   },
   async getResult(submissionId) {
     try {
-      let res = await axiosInstance.get(`/api/student/get_result/${submissionId}`, {
-        headers: {
-          "x-access-token": localStorage.getItem("token"),
-        },
-      });
+      let res = await axiosInstance.get(
+        `/api/student/get_result/${submissionId}`,
+        {
+          headers: {
+            "x-access-token": localStorage.getItem("token"),
+          },
+        }
+      );
       return res?.data || null;
     } catch (err) {
       toast.error(err?.response?.data?.error);
@@ -30,7 +33,7 @@ const AssignmentService = {
     try {
       let res = await axiosInstance.post(
         `/api/student/submit`,
-        { ...payload, assignment_id : assignmentId },
+        { ...payload, assignment_id: assignmentId },
         {
           headers: {
             "x-access-token": localStorage.getItem("token"),
