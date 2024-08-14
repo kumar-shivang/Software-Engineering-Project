@@ -10,7 +10,39 @@ const ChatBotService = {
       });
       return res?.data || null;
     } catch (err) {
-      toast.error(err?.response?.data?.error);
+      toast.error(err?.response?.data?.error || 'Something went wrong!');
+    }
+  },
+  async getFeedback(submissionId) {
+    try {
+      let res = await axiosInstance.post(
+        '/api/help/feedback',
+        { submission_id :submissionId },
+        {
+          headers: {
+            "x-access-token": localStorage.getItem("token"),
+          },
+        }
+      );
+      return res?.data || null;
+    } catch (err) {
+      toast.error(err?.response?.data?.error || 'Something went wrong!');
+    }
+  },
+  async getProgrammingFeedback(submissionId) {
+    try {
+      let res = await axiosInstance.post(
+        '/api/help/explain',
+        { submission_id :submissionId },
+        {
+          headers: {
+            "x-access-token": localStorage.getItem("token"),
+          },
+        }
+      );
+      return res?.data || null;
+    } catch (err) {
+      toast.error(err?.response?.data?.error || 'Something went wrong!');
     }
   },
 };

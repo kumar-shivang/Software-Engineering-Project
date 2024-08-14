@@ -4,6 +4,7 @@ import CourseService from '../../services/Course/index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faFileAlt } from '@fortawesome/free-solid-svg-icons';
 import VideoPage from '../../components/VideoPage';
+import ProgrammingAssignment from '../../containers/ProgrammingAssignment';
 import GradedAssignment from '../../containers/Assignment';
 import Chatbot from '../../components/ChatBot/index'
 
@@ -14,6 +15,7 @@ const Weeks = () => {
   const [expandedWeek, setExpandedWeek] = useState(null);
   const [selectedLecture, setSelectedLecture] = useState(null);
   const [selectedAssignment, setSelectedAssignment] = useState(null);
+  const [selectedProgrammingAssignment, setSelectedProgrammingAssignment] = useState(null);
 
   useEffect(() => {
     getAllWeeksContent();
@@ -39,10 +41,18 @@ const Weeks = () => {
   const handleLectureClick = (lecture) => {
     setSelectedLecture(lecture);
     setSelectedAssignment(null);
+    setSelectedProgrammingAssignment(null);
   };
 
   const handleAssignmentClick = (assignment) => {
     setSelectedAssignment(assignment);
+    setSelectedLecture(null);
+    setSelectedProgrammingAssignment(null);
+  };
+
+  const handlePrograamingAssignmentClick = (assignment) => {
+    setSelectedProgrammingAssignment(assignment);
+    setSelectedAssignment(null);
     setSelectedLecture(null);
   };
 
@@ -90,6 +100,24 @@ const Weeks = () => {
               </button>
           </li>
         ))
+  }
+
+   const getWeekProgrammingAssignments = (programming_assignments) => {
+    if(programming_assignments?.length === 0){
+        return <li >No Programming Assignments Added</li>
+    }
+    return programming_assignments?.map((assignment) => (
+            <li key={assignment.id} className="mb-2" >
+              <button
+                key={assignment.id}
+                onClick={() => handlePrograamingAssignmentClick(assignment)}
+                className="text-blue-500 hover:text-blue-700 flex items-center"
+              >
+                <FontAwesomeIcon icon={faFileAlt} className="mr-2" />
+                {assignment.name}
+              </button>
+          </li>
+        ))
    }
 
   return (
@@ -108,12 +136,16 @@ const Weeks = () => {
               {expandedWeek?.id === week.id && (
                 <div className="mt-2 ml-4">
                   <h3 className="text-lg font-semibold">Lectures</h3>
-                  <ul className="list-none mb-4">
+                  <ul className="list-none">
                     {getWeekLectures(week?.lectures)}
                   </ul>
-                  <h3 className="text-lg font-semibold">Assignments</h3>
+                  <h3 className="text-lg font-semibold mt-2">Assignments</h3>
                   <ul className="list-none">
                     {getWeeAssignments(week?.assignments)}
+                  </ul>
+                  <h3 className="text-lg font-semibold">Programming</h3>
+                  <ul className="list-none">
+                    {getWeekProgrammingAssignments(week?.programming_assignments)}
                   </ul>
                 </div>
               )}
@@ -136,6 +168,9 @@ const Weeks = () => {
         )}
         {selectedAssignment && (
             <GradedAssignment assignmentId={selectedAssignment?.id} key={selectedAssignment?.id} />
+        )}
+         {selectedProgrammingAssignment && (
+            <ProgrammingAssignment assignmentId={selectedProgrammingAssignment?.id} key={selectedProgrammingAssignment?.id} />
         )}
       </div>
     </div>

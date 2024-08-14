@@ -167,7 +167,7 @@ class Student(Document):
         # check if the assignment exists
         assignment = ProgrammingAssignment.objects(id=assignment_id).first()
         if assignment is None:
-            raise ValueError("Assignment not found")
+            raise ValueError("Programming Assignment not found")
         elif self not in assignment.week.course.students:
             raise ValueError("Student not enrolled in the course")
 

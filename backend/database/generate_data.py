@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
-from logger import log
+import logging
 
 from .tables import Course, Lecture, Question, Student, Week, ProgrammingAssignment
 
-log.info("Generating data")
+logging.info("Generating data")
 
 
 def generate_students():
@@ -20,7 +20,7 @@ def generate_students():
                 password=student["password"],
             )
             student.save()
-            log.info(f"Created student {student.name} with id {student.id}")
+            logging.info(f"Created student {student.name} with id {student.id}")
 
 
 def generate_courses():
@@ -42,7 +42,7 @@ def generate_courses():
         if not Course.objects(name=course["name"]):
             course = Course(name=course["name"], description=course["description"])
             course.save()
-            log.info(f"Created course {course.name} with id {course.id}")
+            logging.info(f"Created course {course.name} with id {course.id}")
 
 
 def generate_enrollments():
@@ -52,7 +52,7 @@ def generate_enrollments():
         for course in courses:
             if student not in course.students and course not in student.courses:
                 student.enroll(course.id)
-        log.info(f"Enrolled student {student.name} in all courses")
+        logging.info(f"Enrolled student {student.name} in all courses")
 
 
 def generate_weeks():
@@ -155,7 +155,7 @@ Never gonna say goodbye
                     transcript=lecture["transcript"],
                 )
         week.save()
-        log.info(f"Created lectures for course {course.name}")
+        logging.info(f"Created lectures for course {course.name}")
 
 
 def generate_assignments():

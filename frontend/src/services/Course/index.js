@@ -7,7 +7,7 @@ const CourseService = {
             let res = await axiosInstance.get('/api/course/');
             return res?.data || null;
         }catch(err){
-            toast.error(err?.response?.data?.error)
+            toast.error(err?.response?.data?.error || 'Something went wrong!')
         }
     },
     async getAllWeeksContentByCourse(courseId){
@@ -15,7 +15,7 @@ const CourseService = {
             let res = await axiosInstance.get(`/api/course/${courseId}`);
             return res?.data || null;
         }catch(err){
-            toast.error(err?.response?.data?.error)
+            toast.error(err?.response?.data?.error || 'Something went wrong!')
         }
     },
     async getAllAssignmentsByCourse(courseId){
@@ -23,7 +23,7 @@ const CourseService = {
             let res = await axiosInstance.get(`/api/course/assignments/${courseId}`);
             return res?.data || null;
         }catch(err){
-            toast.error(err?.response?.data?.error)
+            toast.error(err?.response?.data?.error || 'Something went wrong!')
         }
     }
 }

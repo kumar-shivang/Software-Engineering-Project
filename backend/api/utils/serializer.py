@@ -93,6 +93,13 @@ def serialize_submission(submission):
         "total_grade": submission.get_total_grade(),
     }
 
+def serialize_programming_submission(submission):
+    return {
+        "submission_id": str(submission.id),
+        "code": submission.code,
+        "test_results": submission.test_results,
+    }
+
 
 def serialize_course(course):
     return {
@@ -100,6 +107,17 @@ def serialize_course(course):
         "name": course.name,
         "description": course.description,
         "weeks": [serialize_week(week) for week in course.weeks],
+    }
+
+def serialize_programming_assignment(prog_assignment):
+    return {
+        "id": str(prog_assignment.id),
+        "name": prog_assignment.name,
+        "description": prog_assignment.description,
+        "language":prog_assignment.language,
+        "starter_code":prog_assignment.starter_code,
+        "runner_code":prog_assignment.runner_code,
+        "graded": prog_assignment.graded,
     }
 
 
@@ -110,6 +128,9 @@ def serialize_week(week):
         "lectures": [serialize_lecture(lecture) for lecture in week.lectures],
         "assignments": [
             serialize_assignment(assignment) for assignment in week.assignments
+        ],
+        "programming_assignments": [
+            serialize_programming_assignment(prog_assignment) for prog_assignment in week.programming_assignments
         ],
     }
 
