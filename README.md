@@ -7,7 +7,7 @@ This project is part of the Software Engineering course of BS in Data Science at
 
 1. [Shivang Kumar](www.github.com/kumar-shivang)
 2. [Durgesh Puri Goswami](www.github.com/Durgesh-prog)
-3. https://github.com/AnweshaGhosh9127
+3. [Anwesha Ghosh](www.github.com/AnweshaGhosh9127)
    
 
 ## Technologies Used
