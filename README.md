@@ -8,6 +8,12 @@ This project is part of the Software Engineering course of BS in Data Science at
 1. [Shivang Kumar](www.github.com/kumar-shivang)
 2. [Durgesh Puri Goswami](www.github.com/Durgesh-prog)
 3. [Anwesha Ghosh](www.github.com/AnweshaGhosh9127)
+4. Ajeet Kumar
+5. Maitreya Shelare
+6. Bharti Bansal
+7. Yogesh Kumar
+8. Sheth Shlok Dhaval
+
    
 
 ## Technologies Used
