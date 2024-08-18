@@ -112,7 +112,7 @@ const Assignment = ({ assignmentId }) => {
     return (
       <>
         <p className="text-red-600 mt-2">
-          In Correct Answer: {result?.[questionId]?.answer?.join(", ")}
+          Incorrect Answer: {result?.[questionId]?.answer?.join(", ")}
         </p>
       </>
     );
