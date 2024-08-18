@@ -48,7 +48,9 @@ const ProgrammingAssignment = ({ assignmentId }) => {
   const fetchAssignment = async () => {
     try {
       setLoading(true);
-      const { data } = await AssignmentService.getPrograamingAssignmetById(assignmentId);
+      const { data } = await AssignmentService.getPrograamingAssignmetById(
+        assignmentId
+      );
       setAssignmentData(data);
     } catch (error) {
       toast.error("Failed to load assignment data");
@@ -66,7 +68,10 @@ const ProgrammingAssignment = ({ assignmentId }) => {
     try {
       setSubmissionId(null);
       setTestResults(null);
-      const response = await AssignmentService.submitProgrammingAssignment(assignmentId, code);
+      const response = await AssignmentService.submitProgrammingAssignment(
+        assignmentId,
+        code
+      );
       if (response) {
         toast.success("Programming Assignment Submitted successfully");
         setTestResults(response.data.test_results || []);
@@ -79,13 +84,16 @@ const ProgrammingAssignment = ({ assignmentId }) => {
 
   const handleGetFeedback = useCallback(async () => {
     if (!submissionId || loading) return;
-
+    setLoading(true);
     try {
-      const data = await ChatBotService.getProgrammingFeedback(submissionId);
+      const { data } = await ChatBotService.getProgrammingFeedback(
+        submissionId
+      );
       setFeedback(data || null);
     } catch (error) {
       toast.error("Failed to retrieve feedback");
     }
+    setLoading(false);
   }, [submissionId, loading]);
 
   if (loading) return <LoadingSpinner />;
@@ -100,11 +108,17 @@ const ProgrammingAssignment = ({ assignmentId }) => {
             <p className="mb-4">{assignmentData.description}</p>
             {testResults && testResults[0] && (
               <div className="mt-3">
-                <p className={`${testResults[0].match ? 'text-green-500' : 'text-red-500'}`}>
+                <p
+                  className={`${
+                    testResults[0].match ? "text-green-500" : "text-red-500"
+                  }`}
+                >
                   Output: {testResults[0].output}
                 </p>
                 {!testResults[0].match && (
-                  <p className="text-blue-500">Expected Output: {testResults[0].expected_output}</p>
+                  <p className="text-blue-500">
+                    Expected Output: {testResults[0].expected_output}
+                  </p>
                 )}
               </div>
             )}
@@ -123,7 +137,7 @@ const ProgrammingAssignment = ({ assignmentId }) => {
 
       <div className="lg:w-2/3 mt-6 lg:mt-0">
         <AceEditor
-          mode={assignmentData?.language || 'python'}
+          mode={assignmentData?.language || "python"}
           theme="github"
           onChange={(newValue) => setCode(newValue)}
           name="aceCodeEditor"
@@ -136,12 +150,12 @@ const ProgrammingAssignment = ({ assignmentId }) => {
           width="100%"
           height="500px"
         />
-          <button
-            onClick={handleSubmit}
-            className="bg-blue-500 mt-5 px-4 py-2 w-full text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-75"
-          >
-            Submit Assignment
-          </button>
+        <button
+          onClick={handleSubmit}
+          className="bg-blue-500 mt-5 px-4 py-2 w-full text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-75"
+        >
+          Submit Assignment
+        </button>
       </div>
     </div>
   );

@@ -21,7 +21,8 @@ const Assignment = ({ assignmentId }) => {
   const fetchAssignments = async () => {
     setIsLoadingData(true);
     try {
-      const { data } = await AssignmentService.getAssignmetsById(assignmentId) || {};
+      const { data } =
+        (await AssignmentService.getAssignmetsById(assignmentId)) || {};
       setAssignmentData(data);
     } catch (error) {
       toast.error("Failed to load assignment data");
@@ -43,23 +44,31 @@ const Assignment = ({ assignmentId }) => {
   };
 
   const handleSubmit = async () => {
-    if (!answers || Object.keys(answers).length !== assignmentData?.questions?.length) {
+    if (
+      !answers ||
+      Object.keys(answers).length !== assignmentData?.questions?.length
+    ) {
       toast.error("Please answer all questions");
       return;
     }
 
-    const payload = { answers }
-    setIsLoadingData(true)
-    setResult(null)
-    setAnswers({})
+    const payload = { answers };
+    setIsLoadingData(true);
+    setResult(null);
+    setAnswers({});
     try {
-      const response = await AssignmentService.submitAssignment(assignmentId, payload);
+      const response = await AssignmentService.submitAssignment(
+        assignmentId,
+        payload
+      );
       if (response) {
         toast.success("Assignment Submitted successfully");
         setSubmissionId(response.data.submission_id);
-        const res = await AssignmentService.getResult(response.data.submission_id);
+        const res = await AssignmentService.getResult(
+          response.data.submission_id
+        );
         let resultMap = {};
-        res?.data?.forEach(resultInfo => {
+        res?.data?.forEach((resultInfo) => {
           resultMap[resultInfo?.id] = resultInfo;
         });
         setResult(resultMap);
@@ -67,31 +76,44 @@ const Assignment = ({ assignmentId }) => {
     } catch (error) {
       toast.error("Failed to submit assignment");
     }
-    setIsLoadingData(false)
+    setIsLoadingData(false);
   };
 
   const getFeedback = async () => {
     if (!submissionId || isLoadingData) return;
+    setIsLoadingData(true);
     try {
-      const { data } = await ChatBotService.getFeedback(submissionId) || {};
+      const { data } = (await ChatBotService.getFeedback(submissionId)) || {};
+      console.log(data);
       let feedbackMap = {};
-      data?.forEach(feedbackInfo => {
-        feedbackMap[feedbackInfo?.id] = feedbackInfo;
+      Object.keys(data)?.forEach((feedbackId) => {
+        feedbackMap[feedbackId] = data[feedbackId];
       });
+
+      console.log(feedbackMap);
+
       setFeedback(feedbackMap);
+      setIsLoadingData(false);
     } catch (error) {
       toast.error("Failed to load feedback");
+      setIsLoadingData(false);
     }
   };
 
   const getResult = (questionId) => {
     if (!result || isLoadingData) return;
     if (result[questionId]?.correct === 1) {
-      return <p className="text-green-600 mt-2">Correct answer: {result?.[questionId]?.answer?.join(', ')}</p>;
+      return (
+        <p className="text-green-600 mt-2">
+          Correct answer: {result?.[questionId]?.answer?.join(", ")}
+        </p>
+      );
     }
     return (
       <>
-        <p className="text-red-600 mt-2">In Correct Answer: {result?.[questionId]?.answer?.join(', ')}</p>
+        <p className="text-red-600 mt-2">
+          In Correct Answer: {result?.[questionId]?.answer?.join(", ")}
+        </p>
       </>
     );
   };
@@ -134,9 +156,15 @@ const Assignment = ({ assignmentId }) => {
       <div className="bg-white shadow-lg rounded-lg p-6 max-w-3xl mx-auto">
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{assignmentData?.name}</h1>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {assignmentData?.name}
+            </h1>
             {assignmentData?.dueDate && (
-              <p className={`mt-2 ${isPastDueDate() ? "text-red-600" : "text-gray-700"}`}>
+              <p
+                className={`mt-2 ${
+                  isPastDueDate() ? "text-red-600" : "text-gray-700"
+                }`}
+              >
                 Due Date: {new Date(assignmentData?.dueDate).toString()}
               </p>
             )}
@@ -152,7 +180,9 @@ const Assignment = ({ assignmentId }) => {
           <div key={question.id} className="mb-8">
             <div className="flex justify-between items-center mb-4">
               <p className="text-gray-800 text-lg">{question.question}</p>
-              <p className="text-sm font-semibold text-gray-600">{index + 1} point</p>
+              <p className="text-sm font-semibold text-gray-600">
+                {index + 1} point
+              </p>
             </div>
             {question.type === "multiple_choice" && (
               <ul className="list-none">
@@ -165,7 +195,7 @@ const Assignment = ({ assignmentId }) => {
                         value={answer}
                         onChange={() => handleChange(question.id, answer)}
                         className="mr-3 text-indigo-600 focus:ring-indigo-500"
-                        disabled={isPastDueDate()} 
+                        disabled={isPastDueDate()}
                       />
                       <span className="text-gray-700">{answer}</span>
                     </label>
@@ -222,7 +252,10 @@ const Assignment = ({ assignmentId }) => {
 
         <div className="flex justify-end mt-8">
           <button
-            className={`bg-blue-500 text-white px-6 py-2 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-75 ${isPastDueDate() ? "opacity-40 cursor-not-allowed" : "hover:bg-blue-600"
+            className={`bg-blue-500 text-white px-6 py-2 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-75 ${
+              isPastDueDate()
+                ? "opacity-40 cursor-not-allowed"
+                : "hover:bg-blue-600"
             }`}
             onClick={handleSubmit}
             disabled={isPastDueDate()} // Disable button if the result is available or due date has passed
