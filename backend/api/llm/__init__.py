@@ -57,7 +57,7 @@ def explain():
     question = submission.assignment.description
     prompt = code_prompt.format(code=code, question=question)
     response = code_model.invoke(prompt).content
-    return jsonify({"response": response})
+    return jsonify({"data": response})
 
 
 # NOTE: Get feedback from assignment submissions
@@ -79,7 +79,7 @@ def feedback():
             new_prompt = qa_prompt.format(question=question, answer=answer)
             response[_id] = qa_model.invoke(new_prompt).content
 
-    return jsonify(response)
+    return jsonify({ "data": response })
 
 
 api.register_blueprint(llm_blueprint)

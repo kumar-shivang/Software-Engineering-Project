@@ -11,7 +11,19 @@ const AssignmentService = {
       });
       return res?.data || null;
     } catch (err) {
-      toast.error(err?.response?.data?.error);
+      toast.error(err?.response?.data?.error || 'Something went wrong!');
+    }
+  },
+  async getPrograamingAssignmetById(assignmentId) {
+    try {
+      let res = await axiosInstance.get(`/api/assignment/programming_assignments/${assignmentId}`, {
+        headers: {
+          "x-access-token": localStorage.getItem("token"),
+        },
+      });
+      return res?.data || null;
+    } catch (err) {
+      toast.error(err?.response?.data?.error || 'Something went wrong!');
     }
   },
   async getResult(submissionId) {
@@ -26,7 +38,7 @@ const AssignmentService = {
       );
       return res?.data || null;
     } catch (err) {
-      toast.error(err?.response?.data?.error);
+      toast.error(err?.response?.data?.error || 'Something went wrong!');
     }
   },
   async submitAssignment(assignmentId, payload) {
@@ -42,7 +54,23 @@ const AssignmentService = {
       );
       return res?.data || null;
     } catch (err) {
-      toast.error(err?.response?.data?.error);
+      toast.error(err?.response?.data?.error || 'Something went wrong!');
+    }
+  },
+  async submitProgrammingAssignment(assignmentId, code) {
+    try {
+      let res = await axiosInstance.post(
+        `/api/student/submit/programming/${assignmentId}`,
+        { code },
+        {
+          headers: {
+            "x-access-token": localStorage.getItem("token"),
+          },
+        }
+      );
+      return res?.data || null;
+    } catch (err) {
+      toast.error(err?.response?.data?.error || 'Something went wrong!');
     }
   },
 };

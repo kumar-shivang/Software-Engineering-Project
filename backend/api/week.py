@@ -2,8 +2,6 @@ from flask import Blueprint, jsonify
 from database.tables import Week
 from . import api
 
-from api.utils.serializer import serialize_programming_assignment
-
 week_blueprint = Blueprint("week", __name__, url_prefix="/week")
 
 

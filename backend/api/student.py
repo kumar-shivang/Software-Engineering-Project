@@ -6,9 +6,9 @@ from werkzeug.security import check_password_hash
 from functools import wraps
 
 from yaml import serialize
-from database.tables import Assignment, Student, Submission
+from database.tables import Assignment, Student, Submission, ProgrammingAssignment
 from . import api, token_required
-from api.utils.serializer import serialize_submission
+from api.utils.serializer import serialize_submission, serialize_programming_submission
 
 student_blueprint = Blueprint("student", __name__, url_prefix="/student")
 
@@ -43,12 +43,12 @@ def submit():
 def submit_programming(assignment_id):
     data = request.json
     student = g.current_user
-    assignment = Assignment.objects(id=assignment_id).first()
+    assignment = ProgrammingAssignment.objects(id=assignment_id).first()
     if assignment is None:
-        return jsonify({"error": "Assignment not found"}), 404
+        return jsonify({"error": "Programming Assignment not found"}), 404
     code = data["code"]
-    result = student.submit_programming(assignment.id, code)
-    return jsonify({"message": "Submitted", "result": result})
+    submission = student.submit_programming_assignment(assignment.id, code)
+    return jsonify({"message": "Submitted", "data": serialize_programming_submission(submission)  })
 
 
 # NOTE: get student by id
@@ -118,7 +118,6 @@ def get_result(submission_id):
     submission = Submission.objects(id=submission_id).first()
     if not submission:
         return jsonify({"error": "Submission not found"}), 404
-    print(submission.to_json())
     data = submission.get_result()
     return jsonify({"data": data})
 

@@ -8,7 +8,7 @@ const LoginService = {
             return res?.data || null;
         }catch(err){
             localStorage.removeItem('token')
-            toast.error(err?.response?.data?.error)
+            toast.error(err?.response?.data?.error || 'Something went wrong!')
         }
     }
 }

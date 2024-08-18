@@ -2,7 +2,8 @@ openapi: 3.0.1
 info:
   title: Seek 2.0
   version: 1.0.0
-  description: <h1>An AI-enabled platform for students</h1>
+  description: 
+    <h1>An AI-enabled platform for students</h1>
     <p>Seek 2.0 is an AI-enabled platform that helps students learn more effectively. It provides students with personalized learning experiences, real-time feedback on assignments, and access to a chatbot for instant help with coding problems.</p>
     <p>Seek 2.0 allows students to:</p>
     <ul>
@@ -30,7 +31,15 @@ info:
     <li>Yogesh Bhatia</li>
     </ul>
 
-servers: [url: http://127.0.0.1:5000/api]
+
+
+
+
+
+servers:
+  [
+  url: http://127.0.0.1:5000/api
+  ]
 paths:
   /student:
     get:
@@ -70,7 +79,7 @@ paths:
                   type: object
                   additionalProperties:
                     type: string
-                  example: { "question_id": "answer" }
+                  example: { "question_id": "answer"}
       responses:
         200:
           description: Assignment submitted successfully
@@ -313,35 +322,35 @@ paths:
                     example: Course not found
 
   /week/{week_id}:
-    get:
-      tags:
-        - Weeks
-      summary: Get a single week
-      description: Retrieve details of a specific week by its ID.
-      parameters:
-        - name: week_id
-          in: path
-          required: true
-          description: The ID of the week to retrieve
-          schema:
-            type: string
-      responses:
-        "200":
-          description: A single week
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Week"
-        "404":
-          description: Week not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: Week not found
+      get:
+        tags:
+          - Weeks
+        summary: Get a single week
+        description: Retrieve details of a specific week by its ID.
+        parameters:
+          - name: week_id
+            in: path
+            required: true
+            description: The ID of the week to retrieve
+            schema:
+              type: string
+        responses:
+          '200':
+            description: A single week
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Week"
+          '404':
+            description: Week not found
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      example: Week not found
   /help/chat:
     post:
       summary: Chat with the chatbot
@@ -418,9 +427,23 @@ paths:
             schema:
               type: object
               properties:
-                submission_id:
-                  type: string
-                  example: "60b6c8f3f2fd5e3a2c67e6d9"
+                assignment:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "60b6c8f3f2fd5e3a2c67e6d9"
+                      question:
+                        type: string
+                        example: "What is the capital of France?"
+                      answer:
+                        type: string
+                        example: "Paris"
+                      correct:
+                        type: boolean
+                        example: false
       responses:
         200:
           description: Feedback on the assignment
@@ -445,15 +468,16 @@ paths:
                           example: "Lyon"
                         correct:
                           type: boolean
-                          example: false
-
+                          example: false  
+                      
+  
 components:
   schemas:
     Student:
       type: object
       properties:
         id:
-          $ref: "#/components/schemas/id"
+          $ref: '#/components/schemas/id'
         name:
           type: string
         email:
@@ -471,13 +495,14 @@ components:
         submissions:
           type: array
           items:
-            $ref: "#/components/schemas/_id"
+            $ref: '#/components/schemas/_id'
+
 
     Course:
       type: object
       properties:
         id:
-          $ref: "#/components/schemas/id"
+          $ref: '#/components/schemas/id'
         name:
           type: string
         description:
@@ -495,7 +520,7 @@ components:
       type: object
       properties:
         id:
-          $ref: "#/components/schemas/id"
+          $ref: '#/components/schemas/id'
         number:
           type: integer
         course:
@@ -513,7 +538,7 @@ components:
       type: object
       properties:
         id:
-          $ref: "#/components/schemas/id"
+          $ref: '#/components/schemas/id'
         name:
           type: string
         due_date:
@@ -534,7 +559,7 @@ components:
       type: object
       properties:
         id:
-          $ref: "#/components/schemas/id"
+          $ref: '#/components/schemas/id'
         student:
           $ref: "#/components/schemas/Student"
         assignment:
@@ -552,7 +577,7 @@ components:
       type: object
       properties:
         id:
-          $ref: "#/components/schemas/id"
+          $ref: '#/components/schemas/id'
         question:
           type: string
         qtype:
@@ -574,7 +599,7 @@ components:
       type: object
       properties:
         id:
-          $ref: "#/components/schemas/id"
+          $ref: '#/components/schemas/id'
         name:
           type: string
         week:
@@ -587,9 +612,11 @@ components:
           type: string
 
     id:
-      type: object
+      type:
+        object
       properties:
         $oid:
           type: string
     _id:
-      type: string
+      type:
+        string
