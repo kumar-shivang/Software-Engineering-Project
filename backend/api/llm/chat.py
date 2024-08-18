@@ -11,8 +11,8 @@ from .store import get_session_history
 chat_model = ChatOllama(
     model="qwen:0.5b",
     # model = "phi3:mini",
-    temperature=0.5,
-    max_tokens=100,
+    # temperature=0.5,
+    # max_tokens=100,
     top_p=0.7,
     frequency_penalty=1,
     presence_penalty=1,
@@ -22,7 +22,7 @@ chat_model = ChatOllama(
 qa_model = ChatOllama(
     model="phi3:mini",
     temperature=0.5,
-    # max_tokens=100,
+    max_tokens=100,
     top_p=0.7,
     frequency_penalty=1,
     presence_penalty=1,
@@ -56,7 +56,7 @@ qa_template = """Evaluate the provided answer to the following question. Explain
 Question: {question}
 Answer: {answer}
 
-If the answer is incorrect or incomplete, identify the mistakes or missing information and suggest how the answer can be improved."""
+If the answer is incorrect or incomplete, identify the mistakes or missing information and suggest how the answer can be improved. Keep the answer concise and to the point and under 100 words."""
 
 code_template = """The following code submitted by the student does not correctly solve the problem. Please provide detailed feedback to help the student understand the mistakes and guide them towards the correct solution.
 
