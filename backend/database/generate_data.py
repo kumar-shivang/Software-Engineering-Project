@@ -63,45 +63,33 @@ def generate_weeks():
 
 
 def generate_lectures():
-    video_link1 = "https://www.youtube.com/watch?v=020g-0hhCAU"
-    video_link2 = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    video_link1 = "https://www.youtube.com/watch?v=Kss13U-hvPk"
+    video_link2 = "https://youtu.be/PhfbEr2btGQ?si=QzJHMZx_sYeNDJwE"
     transcript1 = """
-Baby Shark, doo-doo, doo-doo, doo-doo
-Baby Shark, doo-doo, doo-doo, doo-doo
-Baby Shark, doo-doo, doo-doo, doo-doo
-Baby Shark
-Mommy Shark, doo-doo, doo-doo, doo-doo
-Mommy Shark, doo-doo, doo-doo, doo-doo
-Mommy Shark, doo-doo, doo-doo, doo-doo
-Mommy Shark
-Daddy Shark, doo-doo, doo-doo, doo-doo
-Daddy Shark, doo-doo, doo-doo, doo-doo
-Daddy Shark, doo-doo, doo-doo, doo-doo
-Daddy Shark
-Grandma Shark, doo-doo, doo-doo, doo-doo
-Grandma Shark, doo-doo, doo-doo, doo-doo
-Grandma Shark, doo-doo, doo-doo, doo-doo
-Grandma Shark
-Grandpa Shark, doo-doo, doo-doo, doo-doo
-Grandpa Shark, doo-doo, doo-doo, doo-doo
-Grandpa Shark, doo-doo, doo-doo, doo-doo
-Grandpa Shark
-Let's go hunt, doo-doo, doo-doo, doo-doo
-Let's go hunt, doo-doo, doo-doo, doo-doo
-Let's go hunt, doo-doo, doo-doo, doo-doo
-Let's go hunt
-Run away, doo-doo, doo-doo, doo-doo
-Run away, doo-doo, doo-doo, doo-doo
-Run away, doo-doo, doo-doo, doo-doo
-Run away (ah!)
-Safe at last, doo-doo, doo-doo, doo-doo
-Safe at last, doo-doo, doo-doo, doo-doo
-Safe at last, doo-doo, doo-doo, doo-doo
-Safe at last (phew)
-It's the end, doo-doo, doo-doo, doo-doo
-It's the end, doo-doo, doo-doo, doo-doo
-It's the end, doo-doo, doo-doo, doo-doo
-It's the end"""
+Despite what you might have thought, math is not just meaningless formulas that popped out of nowhere.
+Even though you might not be able to see it, it's everywhere in our universe.
+Among the realm of mathematics, there's one particular field described by the Nobel winning physicist Richard Feynman as a language of God.
+Calculus, scary huh? Well, it's basically just a description of changes in our ever-changing universe.
+Normally when we talk about changes and stuff, we talk about the difference in the amount of stuff after the change.
+Well, we can also talk about how fast something changes, the rate of change, how much something changes in a period of time.
+To find the rate of change of the height of this bean sprout, we found out how much it has grown within the period of time, dividing the height by the time gives you the rate of change, twelve hundred and fifty meters per second, easy right?
+But if you're a good observer, you're probably notice that most things don't change at a constant rate.
+So the method I just mentioned doesn't really indicate the variations and the rate of change throughout the entire motion.
+Perhaps we can chop the motion up according to its speed, like fast period and slow period. Yeah, but it's perhaps still not precise enough.
+How about dividing it into smaller chunks like tracking a change in the distance every second, milliseconds, nanosecond, or even zero seconds.
+Wait, what? Nothing and change within zero seconds where time doesn't even pass.
+Well, even a powerful subject like math can't change something absurd into something sensible.
+What we can do is to record a change within an infinitely small period of time, almost zero seconds but not exactly zero.
+We call this small period of time Delta X. As Delta X decreases, you see the rate of change approaching a certain value and from there we can approximate the rate of change at a specific moment.
+This process is called differentiation. What's so amazing about calculus is that not only we can use it to find out the instantaneous rate of change but also to do the reverse.
+Given how quickly something changes, we can know how much something has changed.
+To find out the distance traveled from the speed, we can multiply its speed and a change in time.
+But what if the speed is not constant? Well, we can chop its motional into very small periods Delta X and then add all the distances travel within each small period up to get the total change in the distance throughout the entire motion.
+As Delta X decreases approaching zero, you can see the total change in distance approaching a certain value.
+This process is called integration. You might ask why do we care about calculus.
+Apart from nailing exams, well many people do care. Scientists use it to describe the changes in our natural world.
+Engineers use to optimize their designs and economists use to optimize problems.
+Even if there isn't any point in your life that you have to apply calculus and real life problems, well isn't the ability to see the world in another language pretty amazing."""
 
     transcript2 = """
 We're no strangers to love
@@ -131,13 +119,13 @@ Never gonna say goodbye
 """
     data = [
         {
-            "name": "Baby Shark",
+            "name": "Intro to calculus",
             "video_link": video_link1,
             "transcript": transcript1,
             # "index":1
         },
         {
-            "name": "Never Gonna Give You Up",
+            "name": "Eigonvalues and eigenvectors",
             "video_link": video_link2,
             # "index":2
             "transcript": transcript2,
