@@ -121,4 +121,3 @@ def serialize_lecture(lecture):
         "url": lecture.url,
         "index": lecture.index,
     }
-
